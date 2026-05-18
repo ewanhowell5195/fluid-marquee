@@ -119,6 +119,32 @@
     </section>
 
     <section>
+      <h2>Reverse direction (negative speed)</h2>
+      <p>Negative <code>data-speed</code> scrolls right-to-left.</p>
+
+      <div class="marquee" data-speed="-128" data-infinite>
+        <div class="marquee-item"><span class="pill">Reverse one</span></div>
+        <div class="marquee-item"><span class="pill">Reverse two</span></div>
+        <div class="marquee-item"><span class="pill">Reverse three</span></div>
+        <div class="marquee-item"><span class="pill">Reverse four</span></div>
+        <div class="marquee-item"><span class="pill">Reverse five</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Reverse + draggable + pausable</h2>
+      <p>Negative speed, with drag and pausable. Drag either way to scrub; momentum resumes the reverse scroll.</p>
+
+      <div class="marquee" data-speed="-96" data-draggable data-pausable data-infinite>
+        <div class="marquee-item"><span class="pill">Drag me either way</span></div>
+        <div class="marquee-item"><span class="pill">Click locks pause</span></div>
+        <div class="marquee-item"><span class="pill">Hover pauses too</span></div>
+        <div class="marquee-item"><span class="pill">Flick with momentum</span></div>
+        <div class="marquee-item"><span class="pill">Resumes reverse</span></div>
+      </div>
+    </section>
+
+    <section>
       <h2>Content that fits, no scrolling</h2>
       <p>Without <code>data-infinite</code>, the marquee stays static when the content fits.</p>
 
