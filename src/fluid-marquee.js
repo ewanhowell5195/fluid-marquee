@@ -14,14 +14,14 @@ class FluidMarquee {
       return element.hasAttribute(toAttr(key)) ? true : fallback
     }
     const speedAttr = element.getAttribute(toAttr("speed"))
-    this.speed = "speed" in options ? +options.speed : (speedAttr ? parseFloat(speedAttr) : 128)
+    this.speed = "speed" in options ? +options.speed : (speedAttr ? parseFloat(speedAttr) : 64)
     this.infinite = flag("infinite")
     this.draggable = flag("draggable")
     this.vertical = flag("vertical")
     this.runScripts = flag("runScripts")
     const pausable = flag("pausable")
-    this.pauseOnHover = flag("pauseOnHover", pausable)
-    this.pauseOnClick = flag("pauseOnClick", pausable)
+    this.pauseHover = flag("pauseHover", pausable)
+    this.pauseClick = flag("pauseClick", pausable)
 
     this._axis = this.vertical ? "Y" : "X"
     this._clientProp = this.vertical ? "clientY" : "clientX"
@@ -63,8 +63,8 @@ class FluidMarquee {
     if (this.vertical) element.classList.add("fluid-marquee-vertical")
 
     this._setupObservers()
-    if (this.pauseOnHover) this._setupHoverPause()
-    if (this.pauseOnClick) this._setupClickPause()
+    if (this.pauseHover) this._setupHoverPause()
+    if (this.pauseClick) this._setupClickPause()
     if (this.draggable) this._setupDrag()
 
     this._refresh()
@@ -206,6 +206,11 @@ class FluidMarquee {
         setTimeout(() => {
           this.element.removeEventListener("click", suppress, { capture: true })
         }, 50)
+
+        if (this.pauseHover && this.pauseClick) {
+          this._ensureOutsideListener()
+          this.clickPaused = true
+        }
       }
 
       this._updateLoop()
@@ -344,20 +349,27 @@ class FluidMarquee {
     return [...this.sub.children]
   }
 
-  add(...newItems) {
-    if (!newItems.length) return
-    this.sub.append(...newItems)
+  add(...args) {
+    const list = args.length === 1 && Array.isArray(args[0]) ? args[0] : args
+    if (!list.length) return
+    this.sub.append(...list)
     this._itemsChanged()
   }
 
-  remove(item) {
-    if (item?.parentNode !== this.sub) return
-    item.remove()
-    this._itemsChanged()
+  remove(...args) {
+    const list = args.length === 1 && Array.isArray(args[0]) ? args[0] : args
+    let changed = false
+    for (const item of list) {
+      if (item?.parentNode !== this.sub) continue
+      item.remove()
+      changed = true
+    }
+    if (changed) this._itemsChanged()
   }
 
-  setItems(newItems) {
-    this.sub.replaceChildren(...newItems)
+  setItems(...args) {
+    const list = args.length === 1 && Array.isArray(args[0]) ? args[0] : args
+    this.sub.replaceChildren(...list)
     this._itemsChanged()
   }
 
@@ -381,6 +393,14 @@ class FluidMarquee {
     return this._pauseTarget() === 0
   }
 
+  get dragPaused() {
+    return this.pointerDown
+  }
+
+  get userPaused() {
+    return this.hoverPaused || this.clickPaused || this.pointerDown
+  }
+
   pause(sticky = true) {
     if (sticky) {
       this.apiPaused = true
@@ -402,11 +422,11 @@ class FluidMarquee {
     this._resizeObserver?.disconnect()
     this._visibilityObserver?.disconnect()
 
-    if (this.pauseOnHover) {
+    if (this.pauseHover) {
       this.element.removeEventListener("mouseenter", this._onEnter)
       this.element.removeEventListener("mouseleave", this._onLeave)
     }
-    if (this.pauseOnClick) {
+    if (this.pauseClick) {
       this.element.removeEventListener("click", this._onClick)
     }
     if (this._outsideAttached) {

@@ -1,219 +1,319 @@
-# marquee
+# fluid-marquee
 
 A lightweight, zero-dependency marquee/scrolling content library using modern JavaScript and CSS.
-Just add the `marquee` class to any container!
+Just add `class="fluid-marquee"` to any container!
 
-[![npm version](https://badge.fury.io/js/marquee.svg)](https://www.npmjs.com/package/marquee)
-[![jsDelivr](https://data.jsdelivr.com/v1/package/npm/marquee/badge)](https://www.jsdelivr.com/package/npm/marquee)
+[![npm version](https://badge.fury.io/js/fluid-marquee.svg)](https://www.npmjs.com/package/fluid-marquee)
+[![jsDelivr](https://data.jsdelivr.com/v1/package/npm/fluid-marquee/badge)](https://www.jsdelivr.com/package/npm/fluid-marquee)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[**Live Demo**](https://marquee.ewanhowell.com/)
+[**Live Demo**](https://fluid-marquee.ewanhowell.com/)
 
 ## Features
 
 * No dependencies
-* Automatically clones content to fill the container width
-* Smooth, infinite horizontal scroll using CSS animations
-* Configurable scroll speed
-* Optional pause-on-hover (and tap-to-pause on touch)
-* Optional click-and-drag / touch-drag with momentum
-* Only scrolls when content overflows (with an option to force scrolling)
-* Recalculates automatically on container resize and image load
-* Automatically pauses when scrolled off-screen and when the tab is backgrounded
-* Lazy images are upgraded to eager loading when the marquee scrolls into view
-* Pre-init styling means it never renders as a broken half-state
-* Programmatic API for manual init, refresh, pause, resume, and destroy
-* Works with any HTML content: text, images, components
+* Only scrolls when content actually overflows, otherwise it stays static and centered
+* Horizontal or vertical
+* Configurable speed, in either direction
+* Smooth ease in/out on pause and resume
+* Pause on hover, on click, or both
+* Drag-to-scrub with momentum, on mouse and touch
+* Auto recalculates on resize and when images finish loading
+* Auto pauses when scrolled off-screen
+* Programmatic API for pause, resume, and item management
+* Framework-friendly when items are managed via the JS API (`add`, `remove`, `setItems`) instead of reactive rendering
 
 ## Quick Start
 
 ### Install via npm
 ```bash
-npm install marquee
+npm install fluid-marquee
 ```
 
 ```js
-import "marquee/styles.css"
-import "marquee"
+import "fluid-marquee/styles.css"
+import "fluid-marquee"
 ```
 
 ### Or use via CDN
-https://www.jsdelivr.com/package/npm/marquee
+https://www.jsdelivr.com/package/npm/fluid-marquee
 
-### Add a marquee to your page
+### Add a marquee to your HTML
 
 ```html
-<div class="marquee">
-  <div class="marquee-item">Item 1</div>
-  <div class="marquee-item">Item 2</div>
-  <div class="marquee-item">Item 3</div>
+<div class="fluid-marquee">
+  <div class="fluid-marquee-item">First item</div>
+  <div class="fluid-marquee-item">Second item</div>
+  <div class="fluid-marquee-item">Third item</div>
 </div>
 ```
 
-The marquee will only scroll if its contents overflow its container width. It recalculates automatically when the container resizes or images load.
+Every `.fluid-marquee` on the page is initialised automatically on load - no setup or config required. Marquees added later can be initialised with `FluidMarquee.init(el)` or `FluidMarquee.initAll()`.
+
+By default, the marquee only animates when its contents are wider than the container. If they fit, the items stay static and centered. Resize the window or add/remove items and it recalculates automatically.
 
 ## Settings
 
+All options can be set as HTML data attributes:
+
 | Attribute | Description |
 |---|---|
-| `class="marquee"` | Required. Marks an element as a marquee. |
-| `class="marquee-item"` | Optional helper class for child items, with sensible default padding and sizing. |
-| `data-speed="128"` | Scroll speed in pixels per second. Defaults to `128`. |
-| `data-infinite` | Always scroll, even if the content fits inside the container. |
-| `data-pause-on-hover` | Pause the scroll while hovered (desktop only). Auto-resumes on mouse leave. |
-| `data-pause-on-click` | Click on the marquee to lock pause; click anywhere outside to unlock. |
-| `data-pausable` | Shorthand: enables both `data-pause-on-hover` and `data-pause-on-click`. |
-| `data-draggable` | Allow click-and-drag (or touch-drag) to scrub through the marquee, with momentum on release. |
+| `data-fluid-marquee-speed="64"` | Scroll speed in pixels per second. Defaults to `64`. Negative values reverse direction. |
+| `data-fluid-marquee-infinite` | Always scroll, even if the content fits inside the container. |
+| `data-fluid-marquee-vertical` | Scroll vertically instead of horizontally. The container needs a height. |
+| `data-fluid-marquee-pausable` | Pause on hover (auto resumes) and on click (click outside to resume). |
+| `data-fluid-marquee-pause-hover` | Only pause on hover. |
+| `data-fluid-marquee-pause-click` | Only pause on click. |
+| `data-fluid-marquee-draggable` | Allow click-and-drag (or touch-drag) to scrub through the marquee, with momentum on release. |
+| `data-fluid-marquee-run-scripts` | Re-execute `<script>` tags inside cloned items. Off by default. |
 
-## Examples
+All options can also be passed as a JavaScript object - see [Programmatic init](#programmatic-init).
 
-### Basic marquee
+## Advanced Usage
+
+### Speed and direction
+
+Speed is in pixels per second. Set a negative value to scroll in reverse:
 
 ```html
-<div class="marquee">
-  <div class="marquee-item">Free shipping on all orders over $50</div>
-  <div class="marquee-item">New arrivals every week</div>
-  <div class="marquee-item">Sign up for 10% off your first order</div>
+<div class="fluid-marquee" data-fluid-marquee-speed="64">…</div>
+<div class="fluid-marquee" data-fluid-marquee-speed="-128">…</div>
+```
+
+### Infinite scroll
+
+Without `data-fluid-marquee-infinite`, the marquee stays static when the content fits. Add it to force scrolling regardless:
+
+```html
+<div class="fluid-marquee" data-fluid-marquee-infinite>…</div>
+```
+
+### Vertical
+
+```html
+<div class="fluid-marquee" data-fluid-marquee-vertical style="height: 320px;">
+  <div class="fluid-marquee-item">First</div>
+  <div class="fluid-marquee-item">Second</div>
+  <div class="fluid-marquee-item">Third</div>
 </div>
 ```
 
-### Custom speed
+Default item padding is swapped from `0 16px` to `16px 0` when vertical.
+
+### Pausing
 
 ```html
-<div class="marquee" data-speed="64">
-  <div class="marquee-item">Slow and steady</div>
-  <div class="marquee-item">Half the default speed</div>
+<!-- Hover and click -->
+<div class="fluid-marquee" data-fluid-marquee-pausable>…</div>
+
+<!-- Pauses while hovered, auto resumes -->
+<div class="fluid-marquee" data-fluid-marquee-pause-hover>…</div>
+
+<!-- Click to lock pause, click outside to unlock -->
+<div class="fluid-marquee" data-fluid-marquee-pause-click>…</div>
+```
+
+Pause and resume are smoothly eased so the marquee doesn't visually snap.
+
+### Dragging
+
+Add `data-fluid-marquee-draggable` to let users grab the marquee and scrub through it. Flicking on release applies momentum that decays smoothly back into the normal scroll. On touch, only the marquee's own axis is captured, so the rest of the page still scrolls normally.
+
+```html
+<div class="fluid-marquee" data-fluid-marquee-draggable>…</div>
+```
+
+### Scripts in items
+
+By default, `<script>` tags inside items are *not* re-executed when items are cloned. Add `data-fluid-marquee-run-scripts` to re-execute them on each clone:
+
+```html
+<div class="fluid-marquee" data-fluid-marquee-run-scripts data-fluid-marquee-infinite>
+  <div class="fluid-marquee-item">
+    <button>Click me</button>
+    <script>
+      const btn = document.currentScript.previousElementSibling
+      btn.addEventListener("click", () => alert("Clicked!"))
+    </script>
+  </div>
 </div>
 ```
 
-### Always scrolling
+In this example, each clone runs its own copy of the script, so every visible button gets its own click listener. Without `data-fluid-marquee-run-scripts`, the inert clones produced by `cloneNode` wouldn't run and only the original button would respond - clicks on the clones would do nothing.
 
-By default, the marquee only animates when its contents are wider than the container. Add `data-infinite` to force it to scroll even when its contents would fit:
-
-```html
-<div class="marquee" data-infinite>
-  <div class="marquee-item">Always scrolling</div>
-  <div class="marquee-item">Even when it fits</div>
-</div>
-```
-
-### Pause on hover / tap
-
-```html
-<div class="marquee" data-pausable>
-  <div class="marquee-item">Hover to pause</div>
-  <div class="marquee-item">Tap to pause on touch</div>
-</div>
-```
-
-### Drag to scrub
-
-Add `data-draggable` to let users grab the marquee and scrub through it. Works with mouse, touch, and pen via Pointer Events. Vertical page scrolling is preserved on touch (only horizontal drags are captured). Releasing with a flick applies momentum that decays smoothly back into the normal scroll.
-
-```html
-<div class="marquee" data-draggable>
-  <div class="marquee-item">Drag me</div>
-  <div class="marquee-item">Flick to throw</div>
-  <div class="marquee-item">Releases with momentum</div>
-</div>
-```
-
-`data-draggable` combines naturally with `data-pausable`. On touch, a tap toggles pause and a drag scrubs; if you drag past a few pixels, the tap-to-pause is suppressed. Click events fired on items during a drag are also suppressed.
-
-### Images
-
-```html
-<div class="marquee" data-speed="96">
-  <img class="marquee-item" src="logo1.svg">
-  <img class="marquee-item" src="logo2.svg">
-  <img class="marquee-item" src="logo3.svg">
-</div>
-```
-
-Lazy-loaded images (`loading="lazy"`) inside a marquee will be switched to eager loading when the marquee first scrolls into view, so the clone-and-fill logic gets accurate widths. Images that load after init also trigger a recalculation automatically.
+Event delegation on the marquee element is the alternative if you want the listener attached just once.
 
 ## Programmatic API
 
-A `Marquee` class is exported (and also attached to `window.Marquee`) for manual control. Each element also gets an `.marquee` property pointing to its instance.
+`fluid-marquee` auto-initialises every `.fluid-marquee` on the page. You can also drive it from JavaScript.
+
+### Programmatic init
 
 ```js
-import Marquee from "marquee"
+// Initialise a specific element (returns the instance, idempotent)
+FluidMarquee.init(el, { speed: 64, pausable: true })
 
-// Init a specific element (no-op if already initialised). Accepts a child too.
-const m = Marquee.init(document.querySelector(".my-marquee"))
+// Initialise everything inside a root (defaults to document)
+FluidMarquee.initAll(document, { draggable: true })
 
-// Init all uninitialised marquees within a root (defaults to document)
-Marquee.initAll(myContainer)
-
-// Get the instance for an already-initialised element
-const existing = Marquee.get(element)
-const sameThing = element.marquee
+// Initialise an element directly, without the closest() lookup
+new FluidMarquee(el, { speed: 64 })
 ```
 
-### Options
+`FluidMarquee.init(el)` walks up from `el` with `closest(".fluid-marquee")` and uses that, so you can pass a child of the marquee. `new FluidMarquee(el)` initialises `el` itself directly, with no lookup.
 
-`Marquee.init(el, options)` and `Marquee.initAll(root, options)` accept an optional config object. Options override their corresponding data attributes.
+Both paths are idempotent: calling them on an already-initialised element returns the existing instance instead of creating a new one.
+
+The `options` argument accepts the same keys as the data attributes, but in `camelCase`:
+
+| Option | Type |
+|---|---|
+| `speed` | number |
+| `infinite` | boolean |
+| `vertical` | boolean |
+| `pausable` | boolean |
+| `pauseHover` | boolean |
+| `pauseClick` | boolean |
+| `draggable` | boolean |
+| `runScripts` | boolean |
+
+### Getting the instance
+
+After init, the marquee instance is available three ways:
 
 ```js
-Marquee.init(el, {
-  speed: 64,          // pixels per second
-  infinite: true,     // always scroll
-  pauseOnHover: true, // pause while hovered
-  pauseOnClick: true, // lock pause on click
-  pausable: true,     // shorthand: both pauseOnHover and pauseOnClick
-  draggable: true     // enable drag-to-scrub
-})
+const el = document.querySelector(".fluid-marquee")
+
+el.marquee                  // The instance, attached to the marquee element itself
+FluidMarquee.get(el)        // Same instance - also accepts any descendant (uses closest)
+FluidMarquee.init(el)       // Same - also accepts any descendant (uses closest)
 ```
 
-Booleans default to `false`. Pass `false` explicitly to disable a feature that's set via data attribute.
+`el.marquee` is the shortest form when you already have a reference to the marquee element. `get` and `init` walk up from `el` using `closest(".fluid-marquee")`, so they work whether you pass the marquee itself or any element inside it.
 
-### Instance methods
+### Instance API
 
-| Method | Description |
+```js
+m.pause()         // Sticky pause - only resume() clears it
+m.pause(false)    // User-style pause - clicking outside the marquee clears it
+m.resume()        // Resumes, unless the user is actively interacting (hovering or dragging)
+m.paused          // True if anything is currently keeping it paused
+m.apiPaused       // True if paused via m.pause()
+m.userPaused      // Aggregate - hoverPaused || clickPaused || dragPaused
+m.hoverPaused     // True if the mouse is currently hovering
+m.clickPaused     // True if the user clicked the marquee to lock pause
+m.dragPaused      // True while the user is actively touching/dragging the marquee
+
+m.refresh()       // Force a re-measure (rarely needed, ResizeObserver handles most cases)
+m.destroy()       // Tear down completely and restore the current items as direct children
+```
+
+### Item management
+
+```js
+m.items           // Getter - array of the current item elements
+
+m.add(itemEl)              // Append one or more items
+m.add(itemA, itemB, itemC) // Append several
+m.add([itemA, itemB])      // Or pass an array
+
+m.remove(itemEl)           // Remove one or more items
+m.remove(itemA, itemB)     // Several
+m.remove([itemA, itemB])   // Or as an array
+
+m.setItems([a, b, c])      // Replace all items at once
+m.setItems(a, b, c)        // Or pass them as args
+```
+
+After any items change, the measure snapshot is rebuilt and clones are regenerated automatically.
+
+### Example
+
+```html
+<div class="fluid-marquee">
+  <div class="fluid-marquee-item">First</div>
+  <div class="fluid-marquee-item">Second</div>
+</div>
+<button id="add">Add</button>
+<button id="pause">Toggle pause</button>
+```
+
+```js
+const m = document.querySelector(".fluid-marquee").marquee
+
+document.getElementById("add").onclick = () => {
+  const item = document.createElement("div")
+  item.className = "fluid-marquee-item"
+  item.textContent = `Item ${m.items.length + 1}`
+  m.add(item)
+}
+
+document.getElementById("pause").onclick = () => {
+  if (m.paused) m.resume()
+  else m.pause()
+}
+```
+
+## Styling
+
+`fluid-marquee` only ships the structural CSS it needs to function. All visual styling is up to you - style `.fluid-marquee` and `.fluid-marquee-item` like any other element:
+
+```css
+.fluid-marquee {
+  background: #f1f1f1;
+  border: 1px solid #ddd;
+  padding: 12px 0;
+}
+
+.fluid-marquee-item {
+  font-weight: 600;
+}
+```
+
+### Structure after init
+
+After init, your items are no longer direct children of `.fluid-marquee`. They get wrapped in `.fluid-marquee-sub`, which sits inside `.fluid-marquee-track`. Cloned copies of the strip are appended alongside the original. So the DOM looks roughly like:
+
+```html
+<div class="fluid-marquee fluid-marquee-initialised">
+  <div class="fluid-marquee-track">
+    <div class="fluid-marquee-sub">…your items…</div>
+    <div class="fluid-marquee-sub fluid-marquee-clone">…</div>
+    <div class="fluid-marquee-sub fluid-marquee-clone">…</div>
+  </div>
+  <div class="fluid-marquee-measure">…hidden measure copy…</div>
+</div>
+```
+
+Avoid direct-child selectors like `.fluid-marquee > *` or `.fluid-marquee > .item` - they won't match your items post-init. Use `.fluid-marquee-item` (or a descendant selector) instead.
+
+### Classes
+
+These classes are added by `fluid-marquee` and can be targeted with CSS:
+
+| Class | When applied |
 |---|---|
-| `m.refresh()` | Recalculate clone count and animation duration. Called automatically on resize and image load. |
-| `m.pause()` | Pause the scroll. |
-| `m.resume()` | Resume the scroll. |
-| `m.destroy()` | Tear down: restore the original DOM, remove clones, disconnect observers, and remove listeners. |
+| `fluid-marquee-initialised` | After the marquee is initialised. |
+| `fluid-marquee-scrolling` | While the marquee is actively scrolling (content overflows or `data-fluid-marquee-infinite` is set). |
+| `fluid-marquee-vertical` | When `data-fluid-marquee-vertical` is set. |
+| `fluid-marquee-draggable` | When `data-fluid-marquee-draggable` is set. |
+| `fluid-marquee-dragging` | While the user is actively dragging. |
+| `fluid-marquee-clone` | On each cloned copy of the item strip. |
 
-### Auto-init
-
-By default, all `.marquee` elements present at `DOMContentLoaded` are initialised automatically. If you inject marquees later (e.g. via a framework or AJAX), call `Marquee.initAll(root)` after the new content is in the DOM.
-
-## CSS state classes
-
-The library adds these classes to the root `.marquee` element. They're available for custom styling:
-
-| Class | Applied when |
-|---|---|
-| `marquee-initialised` | JS has set up the marquee. |
-| `marquee-scrolling` | The content overflows and is being scrolled. |
-| `marquee-draggable` | `data-draggable` is set on the element. |
-| `marquee-dragging` | A drag is currently in progress. |
+If the content fits inside the container and `data-fluid-marquee-infinite` is not set, the marquee stays static and centered.
 
 ## How it works
 
-1. **Wraps** the marquee's children into a `.marquee-sub` group inside a single `.marquee-track`.
-2. **Measures** the group's natural width using a hidden duplicate (`.marquee-measure`).
-3. **Clones** the group as many times as needed to fill the container plus one extra so the wrap is seamless.
-4. **Animates** the track via a `requestAnimationFrame` loop that updates a single `transform: translateX(...)`. The offset wraps modulo the group width, so the loop is invisible.
-5. **Observes** the container, the measure node, and any images, recalculating when any of them change.
-6. **Pauses automatically** when the marquee scrolls out of view (via `IntersectionObserver`) and when the tab is backgrounded (via `requestAnimationFrame` natively halting).
+`fluid-marquee` uses a clone-and-translate technique:
 
-If the content fits inside the container and `data-infinite` is not set, the marquee stays static and centered.
+1. **Wraps your items** in an internal `.fluid-marquee-track` and `.fluid-marquee-sub`
+2. **Measures the strip** in a hidden node alongside the real one
+3. **Decides whether to scroll** based on whether the strip overflows the container
+4. **Clones the strip** as many times as needed to fill the visible width
+5. **Animates with `requestAnimationFrame`** by translating the track, wrapping the offset modulo the strip width
+6. **Recalculates automatically** on container resize, image load, and item changes
 
-The pre-init CSS uses `display: flex` and `justify-content: space-around`, so even if JavaScript fails to load or is delayed, the marquee renders as a clean, evenly-spaced row instead of a broken stack.
-
-## Note on per-item event listeners
-
-Because the library wraps items into `.marquee-sub` and creates clones, listeners attached directly to individual items only fire on the originals, not the clones. Use **event delegation** on the `.marquee` element instead:
-
-```js
-document.querySelector(".marquee").addEventListener("click", e => {
-  const item = e.target.closest(".marquee-item")
-  if (item) console.log("Clicked:", item)
-})
-```
+Because the animation is JS-driven rather than a CSS `@keyframes`, drag, momentum, and smooth pause/resume can all share the same offset cleanly without fighting an animation timeline.
 
 ## License
 
