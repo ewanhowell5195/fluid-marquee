@@ -475,7 +475,7 @@
     dispatchEvent(new Event("fluid-marquee:ready"))
   }
   if (document.readyState === "loading") {
-    addEventListener("DOMContentLoaded", run)
+    document.addEventListener("DOMContentLoaded", run)
   } else {
     run()
   }
