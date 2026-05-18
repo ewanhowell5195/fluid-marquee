@@ -56,4 +56,28 @@
 
 .marquee-measure .marquee-sub {
   min-width: initial;
+  min-height: initial;
+}
+
+.marquee-vertical,
+.marquee[data-vertical],
+.marquee-vertical .marquee-sub,
+.marquee-vertical .marquee-track {
+  flex-direction: column;
+  min-width: initial;
+  min-height: 100%;
+}
+
+.marquee-vertical .marquee-item,
+.marquee[data-vertical] .marquee-item {
+  padding: 16px 0;
+}
+
+.marquee-vertical.marquee-scrolling .marquee-sub {
+  min-height: fit-content;
+  min-width: initial;
+}
+
+.marquee-vertical.marquee-draggable.marquee-scrolling {
+  touch-action: pan-x;
 }

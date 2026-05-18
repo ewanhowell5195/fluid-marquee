@@ -16,9 +16,16 @@ class Marquee {
     this.speed = "speed" in options ? +options.speed : (d.speed ? parseFloat(d.speed) : 128)
     this.infinite = flag("infinite")
     this.draggable = flag("draggable")
+    this.vertical = flag("vertical")
+    this.runScripts = flag("runScripts")
     const pausable = flag("pausable")
     this.pauseOnHover = flag("pauseOnHover", pausable)
     this.pauseOnClick = flag("pauseOnClick", pausable)
+
+    this._axis = this.vertical ? "Y" : "X"
+    this._clientProp = this.vertical ? "clientY" : "clientX"
+    this._sizeProp = this.vertical ? "offsetHeight" : "offsetWidth"
+    this._containerProp = this.vertical ? "clientHeight" : "clientWidth"
 
     this.sub = document.createElement("div")
     this.sub.className = "marquee-sub"
@@ -36,7 +43,7 @@ class Marquee {
 
     this.clones = []
     this.offset = 0
-    this.subWidth = 0
+    this.subSize = 0
     this.momentum = 0
     this.hoverPaused = false
     this.clickPaused = false
@@ -51,6 +58,7 @@ class Marquee {
 
     element.classList.add("marquee-initialised")
     if (this.draggable) element.classList.add("marquee-draggable")
+    if (this.vertical) element.classList.add("marquee-vertical")
 
     this._setupObservers()
     if (this.pauseOnHover) this._setupHoverPause()
@@ -116,9 +124,10 @@ class Marquee {
   }
 
   _setupDrag() {
-    let startX = 0
+    const axis = this._clientProp
+    let startPos = 0
     let startOffset = 0
-    let lastX = 0
+    let lastPos = 0
     let lastTime = 0
     let moved = false
     let activePointerId = null
@@ -131,35 +140,35 @@ class Marquee {
       activePointerId = e.pointerId
       this.element.setPointerCapture(activePointerId)
       moved = false
-      startX = e.clientX
-      lastX = e.clientX
+      startPos = e[axis]
+      lastPos = e[axis]
       lastTime = performance.now()
       startOffset = this.offset
       samples.length = 0
-      samples.push({ x: e.clientX, t: lastTime })
+      samples.push({ p: e[axis], t: lastTime })
       this.pointerDown = true
       this._updateLoop()
     }
 
     const onMove = e => {
       if (e.pointerId !== activePointerId) return
-      const dx = e.clientX - startX
+      const dp = e[axis] - startPos
       if (!moved) {
-        if (Math.abs(dx) <= 3) return
+        if (Math.abs(dp) <= 3) return
         moved = true
         this.dragging = true
         this.momentum = 0
-        startX = e.clientX
+        startPos = e[axis]
         startOffset = this.offset
         this.element.classList.add("marquee-dragging")
         this._updateLoop()
         return
       }
-      this._setOffset(startOffset - (e.clientX - startX))
+      this._setOffset(startOffset - (e[axis] - startPos))
       const now = performance.now()
-      samples.push({ x: e.clientX, t: now })
+      samples.push({ p: e[axis], t: now })
       while (samples.length > 6) samples.shift()
-      lastX = e.clientX
+      lastPos = e[axis]
       lastTime = now
     }
 
@@ -180,7 +189,7 @@ class Marquee {
             const last = recent[recent.length - 1]
             const dt = (last.t - first.t) / 1000
             if (dt > 0) {
-              const pointerVelocity = (last.x - first.x) / dt
+              const pointerVelocity = (last.p - first.p) / dt
               this.momentum = -pointerVelocity * 0.5
             }
           }
@@ -217,12 +226,12 @@ class Marquee {
   }
 
   _refresh() {
-    const measureWidth = this.measure.firstElementChild.offsetWidth
-    if (!measureWidth) return
+    const measureSize = this.measure.firstElementChild[this._sizeProp]
+    if (!measureSize) return
 
-    this.subWidth = measureWidth
-    const containerWidth = this.element.clientWidth
-    const shouldScroll = this.infinite || measureWidth > containerWidth
+    this.subSize = measureSize
+    const containerSize = this.element[this._containerProp]
+    const shouldScroll = this.infinite || measureSize > containerSize
 
     this.scrolling = shouldScroll
     this.element.classList.toggle("marquee-scrolling", shouldScroll)
@@ -235,7 +244,7 @@ class Marquee {
       return
     }
 
-    const needClones = Math.ceil(containerWidth / measureWidth) + 1
+    const needClones = Math.ceil(containerSize / measureSize) + 1
     while (this.clones.length > needClones) {
       this.clones.pop().remove()
     }
@@ -243,7 +252,7 @@ class Marquee {
       const clone = this.sub.cloneNode(true)
       clone.classList.add("marquee-clone")
       this.track.append(clone)
-      this._runScripts(clone)
+      if (this.runScripts) this._runScripts(clone)
       this.clones.push(clone)
     }
 
@@ -252,16 +261,16 @@ class Marquee {
   }
 
   _setOffset(value) {
-    if (this.subWidth > 0) {
-      value = value % this.subWidth
-      if (value < 0) value += this.subWidth
+    if (this.subSize > 0) {
+      value = value % this.subSize
+      if (value < 0) value += this.subSize
     }
     this.offset = value
     this._applyTransform()
   }
 
   _applyTransform() {
-    this.track.style.transform = `translateX(${-this.offset}px)`
+    this.track.style.transform = `translate${this._axis}(${-this.offset}px)`
   }
 
   _pauseTarget() {
@@ -368,7 +377,8 @@ class Marquee {
       "marquee-initialised",
       "marquee-scrolling",
       "marquee-draggable",
-      "marquee-dragging"
+      "marquee-dragging",
+      "marquee-vertical"
     )
 
     delete this.element.marquee

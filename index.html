@@ -288,6 +288,33 @@
     </section>
 
     <section>
+      <h2>Vertical marquee</h2>
+      <p>Uses <code>data-vertical</code>. Scrolls top to bottom. Default item padding switches to vertical.</p>
+
+      <div class="marquee" data-vertical data-infinite style="height: 240px;">
+        <div class="marquee-item"><span class="pill">First</span></div>
+        <div class="marquee-item"><span class="pill">Second</span></div>
+        <div class="marquee-item"><span class="pill">Third</span></div>
+        <div class="marquee-item"><span class="pill">Fourth</span></div>
+        <div class="marquee-item"><span class="pill">Fifth</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Vertical draggable + pausable</h2>
+
+      <div class="marquee" data-vertical data-draggable data-pausable data-infinite style="height: 320px;">
+        <div class="marquee-item"><span class="pill">Drag vertically</span></div>
+        <div class="marquee-item"><span class="pill">Hover pauses</span></div>
+        <div class="marquee-item"><span class="pill">Click locks pause</span></div>
+        <div class="marquee-item"><span class="pill">Flick to throw</span></div>
+        <div class="marquee-item"><span class="pill">Momentum decays</span></div>
+        <div class="marquee-item"><span class="pill">Touch-action: pan-x</span></div>
+        <div class="marquee-item"><span class="pill">Page still scrolls horizontally</span></div>
+      </div>
+    </section>
+
+    <section>
       <h2>Mixed content</h2>
 
       <div class="marquee" data-speed="96" data-infinite>
