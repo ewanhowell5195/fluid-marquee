@@ -1,27 +1,27 @@
 {
-  "name": "marquee",
+  "name": "fluid-marquee",
   "version": "1.0.0",
   "description": "A lightweight, zero-dependency marquee/scrolling content library using modern JavaScript and CSS.",
   "author": "Ewan Howell <ewanhowell5195>",
   "license": "MIT",
   "type": "module",
-  "main": "./dist/marquee.min.js",
-  "style": "./dist/marquee.min.css",
+  "main": "./dist/fluid-marquee.min.js",
+  "style": "./dist/fluid-marquee.min.css",
   "exports": {
-    ".": "./dist/marquee.min.js",
-    "./styles.css": "./dist/marquee.min.css"
+    ".": "./dist/fluid-marquee.min.js",
+    "./styles.css": "./dist/fluid-marquee.min.css"
   },
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ewanhowell5195/marquee.git"
+    "url": "git+https://github.com/ewanhowell5195/fluid-marquee.git"
   },
   "bugs": {
-    "url": "https://github.com/ewanhowell5195/marquee/issues"
+    "url": "https://github.com/ewanhowell5195/fluid-marquee/issues"
   },
-  "homepage": "https://marquee.ewanhowell.com/",
+  "homepage": "https://fluid-marquee.ewanhowell.com/",
   "scripts": {
     "build": "node build.js"
   },

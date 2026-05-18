@@ -354,10 +354,10 @@
     </section>
 
     <script type="module">
-      await import(`./src/marquee.js?rnd=${Math.random()}`)
+      await import(`./src/fluid-marquee.js?rnd=${Math.random()}`)
       const link = document.createElement('link')
       link.rel = "stylesheet"
-      link.href = `src/marquee.css?rnd=${Math.random()}`
+      link.href = `src/fluid-marquee.css?rnd=${Math.random()}`
       document.head.append(link)
 
       const el = document.getElementById("js-controlled")
