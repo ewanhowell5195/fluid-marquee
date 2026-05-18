@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marquee</title>
+
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 24px;
+        padding: 24px;
+        margin: 0;
+        font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+      }
+
+      section {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      p {
+        margin: 0;
+        opacity: 0.8;
+      }
+
+      .marquee {
+        background: #f1f1f1;
+        border: 1px solid #ddd;
+        padding: 12px 0;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 18px;
+        background: #222;
+        color: #fff;
+        border-radius: 999px;
+        white-space: nowrap;
+      }
+
+      .swatch {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 600;
+      }
+
+      .logo {
+        width: 120px;
+        height: 60px;
+        object-fit: contain;
+      }
+
+      .narrow-container {
+        max-width: 600px;
+      }
+
+      .wide-only {
+        min-width: 220px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Marquee</h1>
+
+    <section>
+      <h2>Basic marquee (text items)</h2>
+      <p>Default speed, content overflows so it scrolls.</p>
+
+      <div class="marquee" data-infinite>
+        <div class="marquee-item"><span class="pill">Free shipping on orders over $50</span></div>
+        <div class="marquee-item"><span class="pill">New arrivals every week</span></div>
+        <div class="marquee-item"><span class="pill">Sign up for 10% off</span></div>
+        <div class="marquee-item"><span class="pill">30-day returns</span></div>
+        <div class="marquee-item"><span class="pill">Customer support 24/7</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Custom speed (slow)</h2>
+      <p>Uses <code>data-speed="48"</code>.</p>
+
+      <div class="marquee" data-speed="48" data-infinite>
+        <div class="marquee-item"><span class="pill">Slow</span></div>
+        <div class="marquee-item"><span class="pill">And</span></div>
+        <div class="marquee-item"><span class="pill">Steady</span></div>
+        <div class="marquee-item"><span class="pill">Wins</span></div>
+        <div class="marquee-item"><span class="pill">The race</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Custom speed (fast)</h2>
+      <p>Uses <code>data-speed="320"</code>.</p>
+
+      <div class="marquee" data-speed="320" data-infinite>
+        <div class="marquee-item"><span class="pill">Fast</span></div>
+        <div class="marquee-item"><span class="pill">Faster</span></div>
+        <div class="marquee-item"><span class="pill">Fastest</span></div>
+        <div class="marquee-item"><span class="pill">Zoom</span></div>
+        <div class="marquee-item"><span class="pill">Zoom</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Content that fits — no scrolling</h2>
+      <p>Without <code>data-infinite</code>, the marquee stays static when the content fits.</p>
+
+      <div class="marquee">
+        <div class="marquee-item">Short</div>
+        <div class="marquee-item">Enough</div>
+        <div class="marquee-item">To fit</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Content that fits — forced scrolling</h2>
+      <p>Same as above but with <code>data-infinite</code>.</p>
+
+      <div class="marquee" data-infinite>
+        <div class="marquee-item">Short</div>
+        <div class="marquee-item">Enough</div>
+        <div class="marquee-item">To fit</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Pause on hover / tap</h2>
+      <p>Uses <code>data-pausable</code>. Hover the marquee to pause; tap to toggle on touch.</p>
+
+      <div class="marquee" data-pausable data-infinite>
+        <div class="marquee-item"><span class="pill">Hover me</span></div>
+        <div class="marquee-item"><span class="pill">I pause</span></div>
+        <div class="marquee-item"><span class="pill">Move away to resume</span></div>
+        <div class="marquee-item"><span class="pill">Or tap me on touch</span></div>
+        <div class="marquee-item"><span class="pill">To toggle pause</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Draggable</h2>
+      <p>Uses <code>data-draggable</code>. Click and drag (or swipe on touch) to scrub. Flick to throw with momentum.</p>
+
+      <div class="marquee" data-draggable data-infinite>
+        <div class="marquee-item"><span class="pill">Drag me</span></div>
+        <div class="marquee-item"><span class="pill">Flick to throw</span></div>
+        <div class="marquee-item"><span class="pill">Momentum decays</span></div>
+        <div class="marquee-item"><span class="pill">Back to normal scroll</span></div>
+        <div class="marquee-item"><span class="pill">Works with touch</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Draggable + pausable</h2>
+      <p>Hover pauses, drag scrubs, tap toggles pause (on touch). Drag past a few pixels and the tap is suppressed.</p>
+
+      <div class="marquee" data-draggable data-pausable data-infinite>
+        <div class="marquee-item"><span class="pill">Hover to pause</span></div>
+        <div class="marquee-item"><span class="pill">Drag to scrub</span></div>
+        <div class="marquee-item"><span class="pill">Tap to toggle</span></div>
+        <div class="marquee-item"><span class="pill">Flick to throw</span></div>
+        <div class="marquee-item"><span class="pill">Momentum decays</span></div>
+        <div class="marquee-item"><span class="pill">Back to scrolling</span></div>
+        <div class="marquee-item"><span class="pill">Tap suppressed if dragged</span></div>
+        <div class="marquee-item"><span class="pill">Works with mouse, touch, pen</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Combined: pausable + slow speed</h2>
+
+      <div class="marquee" data-pausable data-speed="64" data-infinite>
+        <div class="marquee-item"><span class="pill">Slow and pausable</span></div>
+        <div class="marquee-item"><span class="pill">Hover to inspect</span></div>
+        <div class="marquee-item"><span class="pill">Each item</span></div>
+        <div class="marquee-item"><span class="pill">As it passes</span></div>
+        <div class="marquee-item"><span class="pill">Smooth ease-out on pause</span></div>
+        <div class="marquee-item"><span class="pill">Smooth ease-in on resume</span></div>
+        <div class="marquee-item"><span class="pill">Half the default speed</span></div>
+        <div class="marquee-item"><span class="pill">Plenty to read</span></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Programmatic pause / resume</h2>
+      <p>This marquee has no <code>data-pausable</code>. Pause and resume are driven via the JS API (<code>Marquee.get(el).pause()</code> / <code>.resume()</code>).</p>
+
+      <div class="marquee" id="js-controlled" data-infinite>
+        <div class="marquee-item"><span class="pill">Controlled by JS</span></div>
+        <div class="marquee-item"><span class="pill">No pausable attribute</span></div>
+        <div class="marquee-item"><span class="pill">Pause works anyway</span></div>
+        <div class="marquee-item"><span class="pill">Smooth ease-in</span></div>
+        <div class="marquee-item"><span class="pill">Smooth ease-out</span></div>
+        <div class="marquee-item"><span class="pill">Via the public API</span></div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button type="button" id="js-pause">Pause</button>
+        <button type="button" id="js-resume">Resume</button>
+        <button type="button" id="js-toggle">Toggle</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Coloured swatches</h2>
+      <p>Each marquee-item is a coloured square.</p>
+
+      <div class="marquee" data-infinite>
+        <div class="marquee-item"><div class="swatch" style="background:#e74c3c">Red</div></div>
+        <div class="marquee-item"><div class="swatch" style="background:#e67e22">Orange</div></div>
+        <div class="marquee-item"><div class="swatch" style="background:#f1c40f;color:#222">Yellow</div></div>
+        <div class="marquee-item"><div class="swatch" style="background:#2ecc71">Green</div></div>
+        <div class="marquee-item"><div class="swatch" style="background:#3498db">Blue</div></div>
+        <div class="marquee-item"><div class="swatch" style="background:#9b59b6">Purple</div></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Images</h2>
+      <p>Image content from picsum.photos.</p>
+
+      <div class="marquee" data-speed="96" data-infinite>
+        <img class="marquee-item logo" src="https://picsum.photos/id/1011/240/120">
+        <img class="marquee-item logo" src="https://picsum.photos/id/1015/240/120">
+        <img class="marquee-item logo" src="https://picsum.photos/id/1016/240/120">
+        <img class="marquee-item logo" src="https://picsum.photos/id/1018/240/120">
+        <img class="marquee-item logo" src="https://picsum.photos/id/1020/240/120">
+        <img class="marquee-item logo" src="https://picsum.photos/id/1024/240/120">
+        <img class="marquee-item logo" src="https://picsum.photos/id/1025/240/120">
+      </div>
+    </section>
+
+    <section>
+      <h2>Narrow container</h2>
+      <p>Marquee inside a 600px-wide wrapper. Should still measure and scroll correctly.</p>
+
+      <div class="narrow-container">
+        <div class="marquee" data-pausable data-infinite>
+          <div class="marquee-item"><span class="pill wide-only">Item one</span></div>
+          <div class="marquee-item"><span class="pill wide-only">Item two</span></div>
+          <div class="marquee-item"><span class="pill wide-only">Item three</span></div>
+          <div class="marquee-item"><span class="pill wide-only">Item four</span></div>
+          <div class="marquee-item"><span class="pill wide-only">Item five</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Mixed content</h2>
+
+      <div class="marquee" data-speed="96" data-infinite>
+        <div class="marquee-item"><span class="pill">Text</span></div>
+        <img class="marquee-item logo" src="https://picsum.photos/id/237/240/120">
+        <div class="marquee-item"><div class="swatch" style="background:#1abc9c">Box</div></div>
+        <div class="marquee-item"><span class="pill">More text</span></div>
+        <img class="marquee-item logo" src="https://picsum.photos/id/238/240/120">
+        <div class="marquee-item"><div class="swatch" style="background:#34495e">Box</div></div>
+      </div>
+    </section>
+
+    <script type="module">
+      await import(`./src/marquee.js?rnd=${Math.random()}`)
+      const link = document.createElement('link')
+      link.rel = "stylesheet"
+      link.href = `src/marquee.css?rnd=${Math.random()}`
+      document.head.append(link)
+
+      const el = document.getElementById("js-controlled")
+      const m = Marquee.get(el)
+      let paused = false
+      document.getElementById("js-pause").addEventListener("click", () => { m.pause(); paused = true })
+      document.getElementById("js-resume").addEventListener("click", () => { m.resume(); paused = false })
+      document.getElementById("js-toggle").addEventListener("click", () => {
+        paused = !paused
+        if (paused) m.pause()
+        else m.resume()
+      })
+    </script>
+  </body>
+</html>

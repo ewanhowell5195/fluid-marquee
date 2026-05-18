@@ -1,0 +1,53 @@
+.marquee {
+  max-width: 100%;
+}
+
+.marquee, .marquee-sub {
+  min-width: 100%;
+  display: flex;
+  justify-content: space-around;
+  overflow: hidden;
+  position: relative;
+}
+
+.marquee.initialised {
+  justify-content: initial;
+}
+
+.marquee-item {
+  padding: 0 20px;
+  min-width: 256px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marquee:not(.scrolling) .marquee-sub {
+  animation: none !important;
+}
+
+.marquee.scrolling .marquee-sub {
+  justify-content: initial;
+  min-width: fit-content;
+}
+
+.marquee.paused .marquee-sub {
+  animation-play-state: paused !important;
+}
+
+.marquee-measure {
+  min-width: initial;
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}

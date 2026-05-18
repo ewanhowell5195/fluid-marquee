@@ -1,0 +1,41 @@
+{
+  "name": "marquee",
+  "version": "1.0.0",
+  "description": "A lightweight, zero-dependency marquee/scrolling content library using modern JavaScript and CSS.",
+  "author": "Ewan Howell <ewanhowell5195>",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/marquee.min.js",
+  "style": "./dist/marquee.min.css",
+  "exports": {
+    ".": "./dist/marquee.min.js",
+    "./styles.css": "./dist/marquee.min.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ewanhowell5195/marquee.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ewanhowell5195/marquee/issues"
+  },
+  "homepage": "https://marquee.ewanhowell.com/",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "clean-css": "^5.3.3",
+    "terser": "^5.43.1"
+  },
+  "keywords": [
+    "marquee",
+    "scroller",
+    "ticker",
+    "scrolling",
+    "carousel",
+    "javascript",
+    "zero-dependency"
+  ]
+}
