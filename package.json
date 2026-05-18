@@ -1,6 +1,6 @@
 {
   "name": "fluid-marquee",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A lightweight, zero-dependency marquee/scrolling content library using modern JavaScript and CSS.",
   "author": "Ewan Howell <ewanhowell5195>",
   "license": "MIT",
