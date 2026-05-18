@@ -1,16 +1,24 @@
 const instances = new WeakMap()
 
 class Marquee {
-  constructor(element) {
+  constructor(element, options = {}) {
     if (instances.has(element)) return instances.get(element)
     instances.set(element, this)
     element.marquee = this
 
     this.element = element
-    this.speed = parseFloat(element.dataset.speed) || 128
-    this.infinite = "infinite" in element.dataset
-    this.pausable = "pausable" in element.dataset
-    this.draggable = "draggable" in element.dataset
+
+    const d = element.dataset
+    const flag = (key, fallback = false) => {
+      if (key in options) return !!options[key]
+      return key in d ? true : fallback
+    }
+    this.speed = "speed" in options ? +options.speed : (d.speed ? parseFloat(d.speed) : 128)
+    this.infinite = flag("infinite")
+    this.draggable = flag("draggable")
+    const pausable = flag("pausable")
+    this.pauseOnHover = flag("pauseOnHover", pausable)
+    this.pauseOnClick = flag("pauseOnClick", pausable)
 
     this.sub = document.createElement("div")
     this.sub.className = "marquee-sub"
@@ -34,7 +42,6 @@ class Marquee {
     this.clickPaused = false
     this.pointerDown = false
     this.dragging = false
-    this._lastPointerType = "mouse"
     this.visible = true
     this.scrolling = false
     this.pauseMultiplier = 1
@@ -46,7 +53,8 @@ class Marquee {
     if (this.draggable) element.classList.add("marquee-draggable")
 
     this._setupObservers()
-    if (this.pausable) this._setupPausable()
+    if (this.pauseOnHover) this._setupHoverPause()
+    if (this.pauseOnClick) this._setupClickPause()
     if (this.draggable) this._setupDrag()
 
     this._refresh()
@@ -78,7 +86,7 @@ class Marquee {
     this._visibilityObserver.observe(this.element)
   }
 
-  _setupPausable() {
+  _setupHoverPause() {
     this._onEnter = () => {
       this.hoverPaused = true
       this._updateLoop()
@@ -87,15 +95,13 @@ class Marquee {
       this.hoverPaused = false
       this._updateLoop()
     }
-    this._onPointerUpType = e => {
-      this._lastPointerType = e.pointerType
-    }
+    this.element.addEventListener("mouseenter", this._onEnter)
+    this.element.addEventListener("mouseleave", this._onLeave)
+  }
+
+  _setupClickPause() {
     this._onClick = () => {
-      if (this._lastPointerType === "mouse") {
-        this.clickPaused = true
-      } else {
-        this.clickPaused = !this.clickPaused
-      }
+      this.clickPaused = true
       this._updateLoop()
     }
     this._onOutsidePointer = e => {
@@ -105,9 +111,6 @@ class Marquee {
         this._updateLoop()
       }
     }
-    this.element.addEventListener("mouseenter", this._onEnter)
-    this.element.addEventListener("mouseleave", this._onLeave)
-    this.element.addEventListener("pointerup", this._onPointerUpType)
     this.element.addEventListener("click", this._onClick)
     document.addEventListener("pointerdown", this._onOutsidePointer)
   }
@@ -191,8 +194,6 @@ class Marquee {
         setTimeout(() => {
           this.element.removeEventListener("click", suppress, { capture: true })
         }, 50)
-      } else if (this.pausable && e.pointerType !== "mouse") {
-        this.tapPaused = !this.tapPaused
       }
 
       this._updateLoop()
@@ -334,7 +335,7 @@ class Marquee {
 
   resume() {
     this.hoverPaused = false
-    this.tapPaused = false
+    this.clickPaused = false
     this._updateLoop()
   }
 
@@ -343,9 +344,13 @@ class Marquee {
     this._resizeObserver?.disconnect()
     this._visibilityObserver?.disconnect()
 
-    if (this.pausable) {
+    if (this.pauseOnHover) {
       this.element.removeEventListener("mouseenter", this._onEnter)
       this.element.removeEventListener("mouseleave", this._onLeave)
+    }
+    if (this.pauseOnClick) {
+      this.element.removeEventListener("click", this._onClick)
+      document.removeEventListener("pointerdown", this._onOutsidePointer)
     }
     if (this.draggable && this._dragHandlers) {
       const { onDown, onMove, onUp } = this._dragHandlers
@@ -370,14 +375,14 @@ class Marquee {
     instances.delete(this.element)
   }
 
-  static init(element) {
+  static init(element, options) {
     const root = element?.closest?.(".marquee")
     if (!root) return null
-    return new Marquee(root)
+    return new Marquee(root, options)
   }
 
-  static initAll(root = document) {
-    return [...root.querySelectorAll(".marquee:not(.marquee-initialised)")].map(el => new Marquee(el))
+  static initAll(root = document, options) {
+    return [...root.querySelectorAll(".marquee:not(.marquee-initialised)")].map(el => new Marquee(el, options))
   }
 
   static get(element) {

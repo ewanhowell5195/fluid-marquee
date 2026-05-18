@@ -23,7 +23,7 @@ Just add the `marquee` class to any container!
 * Lazy images are upgraded to eager loading when the marquee scrolls into view
 * Pre-init styling means it never renders as a broken half-state
 * Programmatic API for manual init, refresh, pause, resume, and destroy
-* Works with any HTML content — text, images, components
+* Works with any HTML content: text, images, components
 
 ## Quick Start
 
@@ -60,7 +60,9 @@ The marquee will only scroll if its contents overflow its container width. It re
 | `class="marquee-item"` | Optional helper class for child items, with sensible default padding and sizing. |
 | `data-speed="128"` | Scroll speed in pixels per second. Defaults to `128`. |
 | `data-infinite` | Always scroll, even if the content fits inside the container. |
-| `data-pausable` | Pause the scroll on hover (desktop) or tap (touch). |
+| `data-pause-on-hover` | Pause the scroll while hovered (desktop only). Auto-resumes on mouse leave. |
+| `data-pause-on-click` | Click on the marquee to lock pause; click anywhere outside to unlock. |
+| `data-pausable` | Shorthand: enables both `data-pause-on-hover` and `data-pause-on-click`. |
 | `data-draggable` | Allow click-and-drag (or touch-drag) to scrub through the marquee, with momentum on release. |
 
 ## Examples
@@ -116,7 +118,7 @@ Add `data-draggable` to let users grab the marquee and scrub through it. Works w
 </div>
 ```
 
-`data-draggable` combines naturally with `data-pausable` — on touch, a tap toggles pause and a drag scrubs; if you drag past a few pixels, the tap-to-pause is suppressed. Click events fired on items during a drag are also suppressed.
+`data-draggable` combines naturally with `data-pausable`. On touch, a tap toggles pause and a drag scrubs; if you drag past a few pixels, the tap-to-pause is suppressed. Click events fired on items during a drag are also suppressed.
 
 ### Images
 
@@ -132,12 +134,12 @@ Lazy-loaded images (`loading="lazy"`) inside a marquee will be switched to eager
 
 ## Programmatic API
 
-A `Marquee` class is exported (and also attached to `window.Marquee`) for manual control.
+A `Marquee` class is exported (and also attached to `window.Marquee`) for manual control. Each element also gets an `.marquee` property pointing to its instance.
 
 ```js
 import Marquee from "marquee"
 
-// Init a specific element (no-op if already initialised)
+// Init a specific element (no-op if already initialised). Accepts a child too.
 const m = Marquee.init(document.querySelector(".my-marquee"))
 
 // Init all uninitialised marquees within a root (defaults to document)
@@ -145,7 +147,25 @@ Marquee.initAll(myContainer)
 
 // Get the instance for an already-initialised element
 const existing = Marquee.get(element)
+const sameThing = element.marquee
 ```
+
+### Options
+
+`Marquee.init(el, options)` and `Marquee.initAll(root, options)` accept an optional config object. Options override their corresponding data attributes.
+
+```js
+Marquee.init(el, {
+  speed: 64,          // pixels per second
+  infinite: true,     // always scroll
+  pauseOnHover: true, // pause while hovered
+  pauseOnClick: true, // lock pause on click
+  pausable: true,     // shorthand: both pauseOnHover and pauseOnClick
+  draggable: true     // enable drag-to-scrub
+})
+```
+
+Booleans default to `false`. Pass `false` explicitly to disable a feature that's set via data attribute.
 
 ### Instance methods
 
@@ -186,7 +206,7 @@ The pre-init CSS uses `display: flex` and `justify-content: space-around`, so ev
 
 ## Note on per-item event listeners
 
-Because the library wraps items into `.marquee-sub` and creates clones, listeners attached directly to individual items only fire on the originals — not the clones. Use **event delegation** on the `.marquee` element instead:
+Because the library wraps items into `.marquee-sub` and creates clones, listeners attached directly to individual items only fire on the originals, not the clones. Use **event delegation** on the `.marquee` element instead:
 
 ```js
 document.querySelector(".marquee").addEventListener("click", e => {
