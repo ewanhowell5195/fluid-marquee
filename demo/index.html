@@ -546,40 +546,42 @@ m.hoverPaused, m.clickPaused, m.dragPaused</pre>
 
   <script src="https://cdn.jsdelivr.net/npm/fluid-marquee@latest/dist/fluid-marquee.min.js"></script>
   <script>
-    const m = document.getElementById("js-demo").marquee
+    addEventListener("fluid-marquee:ready", () => {
+      const m = document.getElementById("js-demo").marquee
 
-    document.getElementById("js-pause").addEventListener("click", () => {
-      if (m.paused) m.resume()
-      else m.pause()
-    })
+      document.getElementById("js-pause").addEventListener("click", () => {
+        if (m.paused) m.resume()
+        else m.pause()
+      })
 
-    const pillColors = ["danger", "success", "", "purple", "alt", "warning", "pink", "teal", "yellow", "lime", "cyan", "brown"]
-    const addBtn = document.getElementById("js-add")
-    const removeBtn = document.getElementById("js-remove")
+      const pillColors = ["danger", "success", "", "purple", "alt", "warning", "pink", "teal", "yellow", "lime", "cyan", "brown"]
+      const addBtn = document.getElementById("js-add")
+      const removeBtn = document.getElementById("js-remove")
 
-    function updateButtons() {
-      const count = m.items.length
-      addBtn.disabled = count >= 12
-      removeBtn.disabled = count <= 1
-    }
+      function updateButtons() {
+        const count = m.items.length
+        addBtn.disabled = count >= 12
+        removeBtn.disabled = count <= 1
+      }
 
-    addBtn.addEventListener("click", () => {
-      const n = m.items.length + 1
-      const color = pillColors[(n - 1) % pillColors.length]
-      const item = document.createElement("div")
-      item.className = "fluid-marquee-item"
-      item.innerHTML = `<span class="pill ${color}">Item ${n}</span>`
-      m.add(item)
+      addBtn.addEventListener("click", () => {
+        const n = m.items.length + 1
+        const color = pillColors[(n - 1) % pillColors.length]
+        const item = document.createElement("div")
+        item.className = "fluid-marquee-item"
+        item.innerHTML = `<span class="pill ${color}">Item ${n}</span>`
+        m.add(item)
+        updateButtons()
+      })
+
+      removeBtn.addEventListener("click", () => {
+        const last = m.items.at(-1)
+        if (last) m.remove(last)
+        updateButtons()
+      })
+
       updateButtons()
     })
-
-    removeBtn.addEventListener("click", () => {
-      const last = m.items.at(-1)
-      if (last) m.remove(last)
-      updateButtons()
-    })
-
-    updateButtons()
   </script>
 </body>
 </html>
