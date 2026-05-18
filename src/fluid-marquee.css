@@ -1,4 +1,4 @@
-.marquee {
+.fluid-marquee {
   max-width: 100%;
   min-width: 100%;
   display: flex;
@@ -8,7 +8,7 @@
   position: relative;
 }
 
-.marquee-item {
+.fluid-marquee-item {
   padding: 0 16px;
   display: flex;
   align-items: center;
@@ -16,68 +16,68 @@
   flex-shrink: 0;
 }
 
-.marquee-sub {
+.fluid-marquee-sub {
   display: flex;
   align-items: center;
   min-width: 100%;
   justify-content: safe center;
 }
 
-.marquee-track {
+.fluid-marquee-track {
   display: flex;
   min-width: 100%;
   will-change: transform;
 }
 
-.marquee-scrolling .marquee-sub {
+.fluid-marquee-scrolling .fluid-marquee-sub {
   min-width: fit-content;
   justify-content: initial;
 }
 
-.marquee-scrolling {
+.fluid-marquee-scrolling {
   user-select: none;
 }
 
-.marquee-draggable.marquee-scrolling {
+.fluid-marquee-draggable.fluid-marquee-scrolling {
   cursor: grab;
   touch-action: pan-y;
 }
 
-.marquee-draggable.marquee-scrolling.marquee-dragging {
+.fluid-marquee-draggable.fluid-marquee-scrolling.fluid-marquee-dragging {
   cursor: grabbing;
 }
 
-.marquee-measure {
+.fluid-marquee-measure {
   position: absolute;
   top: 0;
   left: 0;
   visibility: hidden;
 }
 
-.marquee-measure .marquee-sub {
+.fluid-marquee-measure .fluid-marquee-sub {
   min-width: initial;
   min-height: initial;
 }
 
-.marquee-vertical,
-.marquee[data-vertical],
-.marquee-vertical .marquee-sub,
-.marquee-vertical .marquee-track {
+.fluid-marquee-vertical,
+.fluid-marquee[data-vertical],
+.fluid-marquee-vertical .fluid-marquee-sub,
+.fluid-marquee-vertical .fluid-marquee-track {
   flex-direction: column;
   min-width: initial;
   min-height: 100%;
 }
 
-.marquee-vertical .marquee-item,
-.marquee[data-vertical] .marquee-item {
+.fluid-marquee-vertical .fluid-marquee-item,
+.fluid-marquee[data-vertical] .fluid-marquee-item {
   padding: 16px 0;
 }
 
-.marquee-vertical.marquee-scrolling .marquee-sub {
+.fluid-marquee-vertical.fluid-marquee-scrolling .fluid-marquee-sub {
   min-height: fit-content;
   min-width: initial;
 }
 
-.marquee-vertical.marquee-draggable.marquee-scrolling {
+.fluid-marquee-vertical.fluid-marquee-draggable.fluid-marquee-scrolling {
   touch-action: pan-x;
 }

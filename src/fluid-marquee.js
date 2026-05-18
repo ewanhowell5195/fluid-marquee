@@ -1,6 +1,6 @@
 const instances = new WeakMap()
 
-class Marquee {
+class FluidMarquee {
   constructor(element, options = {}) {
     if (instances.has(element)) return instances.get(element)
     instances.set(element, this)
@@ -28,15 +28,15 @@ class Marquee {
     this._containerProp = this.vertical ? "clientHeight" : "clientWidth"
 
     this.sub = document.createElement("div")
-    this.sub.className = "marquee-sub"
+    this.sub.className = "fluid-marquee-sub"
     this.sub.append(...element.children)
 
     this.track = document.createElement("div")
-    this.track.className = "marquee-track"
+    this.track.className = "fluid-marquee-track"
     this.track.append(this.sub)
 
     this.measure = document.createElement("div")
-    this.measure.className = "marquee-measure"
+    this.measure.className = "fluid-marquee-measure"
     this.measure.append(this.sub.cloneNode(true))
 
     element.append(this.track, this.measure)
@@ -56,9 +56,9 @@ class Marquee {
     this._lastFrame = 0
     this._refreshScheduled = false
 
-    element.classList.add("marquee-initialised")
-    if (this.draggable) element.classList.add("marquee-draggable")
-    if (this.vertical) element.classList.add("marquee-vertical")
+    element.classList.add("fluid-marquee-initialised")
+    if (this.draggable) element.classList.add("fluid-marquee-draggable")
+    if (this.vertical) element.classList.add("fluid-marquee-vertical")
 
     this._setupObservers()
     if (this.pauseOnHover) this._setupHoverPause()
@@ -160,7 +160,7 @@ class Marquee {
         this.momentum = 0
         startPos = e[axis]
         startOffset = this.offset
-        this.element.classList.add("marquee-dragging")
+        this.element.classList.add("fluid-marquee-dragging")
         this._updateLoop()
         return
       }
@@ -179,7 +179,7 @@ class Marquee {
 
       if (this.dragging) {
         this.dragging = false
-        this.element.classList.remove("marquee-dragging")
+        this.element.classList.remove("fluid-marquee-dragging")
 
         if (samples.length >= 2) {
           const now = performance.now()
@@ -234,7 +234,7 @@ class Marquee {
     const shouldScroll = this.infinite || measureSize > containerSize
 
     this.scrolling = shouldScroll
-    this.element.classList.toggle("marquee-scrolling", shouldScroll)
+    this.element.classList.toggle("fluid-marquee-scrolling", shouldScroll)
 
     if (!shouldScroll) {
       while (this.clones.length) this.clones.pop().remove()
@@ -250,7 +250,7 @@ class Marquee {
     }
     while (this.clones.length < needClones) {
       const clone = this.sub.cloneNode(true)
-      clone.classList.add("marquee-clone")
+      clone.classList.add("fluid-marquee-clone")
       this.track.append(clone)
       if (this.runScripts) this._runScripts(clone)
       this.clones.push(clone)
@@ -374,11 +374,11 @@ class Marquee {
     this.measure.remove()
     this.element.append(...items)
     this.element.classList.remove(
-      "marquee-initialised",
-      "marquee-scrolling",
-      "marquee-draggable",
-      "marquee-dragging",
-      "marquee-vertical"
+      "fluid-marquee-initialised",
+      "fluid-marquee-scrolling",
+      "fluid-marquee-draggable",
+      "fluid-marquee-dragging",
+      "fluid-marquee-vertical"
     )
 
     delete this.element.marquee
@@ -386,29 +386,29 @@ class Marquee {
   }
 
   static init(element, options) {
-    const root = element?.closest?.(".marquee")
+    const root = element?.closest?.(".fluid-marquee")
     if (!root) return null
-    return new Marquee(root, options)
+    return new FluidMarquee(root, options)
   }
 
   static initAll(root = document, options) {
-    return [...root.querySelectorAll(".marquee:not(.marquee-initialised)")].map(el => new Marquee(el, options))
+    return [...root.querySelectorAll(".fluid-marquee:not(.fluid-marquee-initialised)")].map(el => new FluidMarquee(el, options))
   }
 
   static get(element) {
-    const root = element?.closest?.(".marquee")
+    const root = element?.closest?.(".fluid-marquee")
     return root ? instances.get(root) : undefined
   }
 }
 
 if (typeof window !== "undefined") {
-  window.Marquee = Marquee
+  window.FluidMarquee = FluidMarquee
 
   if (document.readyState === "loading") {
-    addEventListener("DOMContentLoaded", () => Marquee.initAll())
+    addEventListener("DOMContentLoaded", () => FluidMarquee.initAll())
   } else {
-    Marquee.initAll()
+    FluidMarquee.initAll()
   }
 }
 
-export default Marquee
+export default FluidMarquee
