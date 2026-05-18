@@ -376,6 +376,10 @@ class FluidMarquee {
     this._scheduleRefresh()
   }
 
+  get paused() {
+    return this._pauseTarget() === 0
+  }
+
   pause(sticky = true) {
     if (sticky) {
       this.apiPaused = true
