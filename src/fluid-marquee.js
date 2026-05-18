@@ -8,12 +8,13 @@ class FluidMarquee {
 
     this.element = element
 
-    const d = element.dataset
+    const toAttr = key => `data-fluid-marquee-${key.replace(/[A-Z]/g, m => "-" + m.toLowerCase())}`
     const flag = (key, fallback = false) => {
       if (key in options) return !!options[key]
-      return key in d ? true : fallback
+      return element.hasAttribute(toAttr(key)) ? true : fallback
     }
-    this.speed = "speed" in options ? +options.speed : (d.speed ? parseFloat(d.speed) : 128)
+    const speedAttr = element.getAttribute(toAttr("speed"))
+    this.speed = "speed" in options ? +options.speed : (speedAttr ? parseFloat(speedAttr) : 128)
     this.infinite = flag("infinite")
     this.draggable = flag("draggable")
     this.vertical = flag("vertical")

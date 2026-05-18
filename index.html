@@ -83,7 +83,7 @@
       <h2>Basic marquee (text items)</h2>
       <p>Default speed, content overflows so it scrolls.</p>
 
-      <div class="fluid-marquee" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Free shipping on orders over $50</span></div>
         <div class="fluid-marquee-item"><span class="pill">New arrivals every week</span></div>
         <div class="fluid-marquee-item"><span class="pill">Sign up for 10% off</span></div>
@@ -94,9 +94,9 @@
 
     <section>
       <h2>Custom speed (slow)</h2>
-      <p>Uses <code>data-speed="48"</code>.</p>
+      <p>Uses <code>data-fluid-marquee-speed="48"</code>.</p>
 
-      <div class="fluid-marquee" data-speed="48" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-speed="48" data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Slow</span></div>
         <div class="fluid-marquee-item"><span class="pill">And</span></div>
         <div class="fluid-marquee-item"><span class="pill">Steady</span></div>
@@ -107,9 +107,9 @@
 
     <section>
       <h2>Custom speed (fast)</h2>
-      <p>Uses <code>data-speed="320"</code>.</p>
+      <p>Uses <code>data-fluid-marquee-speed="320"</code>.</p>
 
-      <div class="fluid-marquee" data-speed="320" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-speed="320" data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Fast</span></div>
         <div class="fluid-marquee-item"><span class="pill">Faster</span></div>
         <div class="fluid-marquee-item"><span class="pill">Fastest</span></div>
@@ -120,9 +120,9 @@
 
     <section>
       <h2>Reverse direction (negative speed)</h2>
-      <p>Negative <code>data-speed</code> scrolls right-to-left.</p>
+      <p>Negative <code>data-fluid-marquee-speed</code> scrolls right-to-left.</p>
 
-      <div class="fluid-marquee" data-speed="-128" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-speed="-128" data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Reverse one</span></div>
         <div class="fluid-marquee-item"><span class="pill">Reverse two</span></div>
         <div class="fluid-marquee-item"><span class="pill">Reverse three</span></div>
@@ -135,7 +135,7 @@
       <h2>Reverse + draggable + pausable</h2>
       <p>Negative speed, with drag and pausable. Drag either way to scrub; momentum resumes the reverse scroll.</p>
 
-      <div class="fluid-marquee" data-speed="-96" data-draggable data-pausable data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-speed="-96" data-fluid-marquee-draggable data-fluid-marquee-pausable data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Drag me either way</span></div>
         <div class="fluid-marquee-item"><span class="pill">Click locks pause</span></div>
         <div class="fluid-marquee-item"><span class="pill">Hover pauses too</span></div>
@@ -146,7 +146,7 @@
 
     <section>
       <h2>Content that fits, no scrolling</h2>
-      <p>Without <code>data-infinite</code>, the marquee stays static when the content fits.</p>
+      <p>Without <code>data-fluid-marquee-infinite</code>, the marquee stays static when the content fits.</p>
 
       <div class="fluid-marquee">
         <div class="fluid-marquee-item">Short</div>
@@ -157,9 +157,9 @@
 
     <section>
       <h2>Content that fits, forced scrolling</h2>
-      <p>Same as above but with <code>data-infinite</code>.</p>
+      <p>Same as above but with <code>data-fluid-marquee-infinite</code>.</p>
 
-      <div class="fluid-marquee" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-infinite>
         <div class="fluid-marquee-item">Short</div>
         <div class="fluid-marquee-item">Enough</div>
         <div class="fluid-marquee-item">To fit</div>
@@ -168,9 +168,9 @@
 
     <section>
       <h2>Pause on hover only</h2>
-      <p>Uses <code>data-pause-on-hover</code>. Pauses while hovered (desktop), auto-resumes on leave. Click does nothing.</p>
+      <p>Uses <code>data-fluid-marquee-pause-on-hover</code>. Pauses while hovered (desktop), auto-resumes on leave. Click does nothing.</p>
 
-      <div class="fluid-marquee" data-pause-on-hover data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-pause-on-hover data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Hover me</span></div>
         <div class="fluid-marquee-item"><span class="pill">I pause</span></div>
         <div class="fluid-marquee-item"><span class="pill">Move away to resume</span></div>
@@ -181,9 +181,9 @@
 
     <section>
       <h2>Pause on click only</h2>
-      <p>Uses <code>data-pause-on-click</code>. Click anywhere on the marquee to lock pause; click anywhere outside to unlock. Hover does nothing.</p>
+      <p>Uses <code>data-fluid-marquee-pause-on-click</code>. Click anywhere on the marquee to lock pause; click anywhere outside to unlock. Hover does nothing.</p>
 
-      <div class="fluid-marquee" data-pause-on-click data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-pause-on-click data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Click me</span></div>
         <div class="fluid-marquee-item"><span class="pill">I stay paused</span></div>
         <div class="fluid-marquee-item"><span class="pill">Even on mouse leave</span></div>
@@ -194,9 +194,9 @@
 
     <section>
       <h2>Pause on hover + click (shorthand)</h2>
-      <p>Uses <code>data-pausable</code>, equivalent to setting both <code>data-pause-on-hover</code> and <code>data-pause-on-click</code>.</p>
+      <p>Uses <code>data-fluid-marquee-pausable</code>, equivalent to setting both <code>data-fluid-marquee-pause-on-hover</code> and <code>data-fluid-marquee-pause-on-click</code>.</p>
 
-      <div class="fluid-marquee" data-pausable data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-pausable data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Hover pauses (auto-resumes)</span></div>
         <div class="fluid-marquee-item"><span class="pill">Click locks pause</span></div>
         <div class="fluid-marquee-item"><span class="pill">Click outside unlocks</span></div>
@@ -207,9 +207,9 @@
 
     <section>
       <h2>Draggable</h2>
-      <p>Uses <code>data-draggable</code>. Click and drag (or swipe on touch) to scrub. Flick to throw with momentum.</p>
+      <p>Uses <code>data-fluid-marquee-draggable</code>. Click and drag (or swipe on touch) to scrub. Flick to throw with momentum.</p>
 
-      <div class="fluid-marquee" data-draggable data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-draggable data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Drag me</span></div>
         <div class="fluid-marquee-item"><span class="pill">Flick to throw</span></div>
         <div class="fluid-marquee-item"><span class="pill">Momentum decays</span></div>
@@ -222,7 +222,7 @@
       <h2>Draggable + pausable</h2>
       <p>Hover pauses, drag scrubs, tap toggles pause (on touch). Drag past a few pixels and the tap is suppressed.</p>
 
-      <div class="fluid-marquee" data-draggable data-pausable data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-draggable data-fluid-marquee-pausable data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Hover to pause</span></div>
         <div class="fluid-marquee-item"><span class="pill">Drag to scrub</span></div>
         <div class="fluid-marquee-item"><span class="pill">Tap to toggle</span></div>
@@ -237,7 +237,7 @@
     <section>
       <h2>Combined: pausable + slow speed</h2>
 
-      <div class="fluid-marquee" data-pausable data-speed="64" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-pausable data-fluid-marquee-speed="64" data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Slow and pausable</span></div>
         <div class="fluid-marquee-item"><span class="pill">Hover to inspect</span></div>
         <div class="fluid-marquee-item"><span class="pill">Each item</span></div>
@@ -251,9 +251,9 @@
 
     <section>
       <h2>Programmatic pause / resume</h2>
-      <p>This marquee has no <code>data-pausable</code>. Pause and resume are driven via the JS API (<code>FluidMarquee.get(el).pause()</code> / <code>.resume()</code>).</p>
+      <p>This marquee has no <code>data-fluid-marquee-pausable</code>. Pause and resume are driven via the JS API (<code>FluidMarquee.get(el).pause()</code> / <code>.resume()</code>).</p>
 
-      <div class="fluid-marquee" id="js-controlled" data-infinite>
+      <div class="fluid-marquee"id="js-controlled" data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Controlled by JS</span></div>
         <div class="fluid-marquee-item"><span class="pill">No pausable attribute</span></div>
         <div class="fluid-marquee-item"><span class="pill">Pause works anyway</span></div>
@@ -273,7 +273,7 @@
       <h2>Add / remove items</h2>
       <p>Buttons mutate the marquee via <code>m.add(el)</code> and <code>m.remove(m.items.at(-1))</code>.</p>
 
-      <div class="fluid-marquee" id="js-items" data-pausable data-infinite>
+      <div class="fluid-marquee"id="js-items" data-fluid-marquee-pausable data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Item 1</span></div>
         <div class="fluid-marquee-item"><span class="pill">Item 2</span></div>
         <div class="fluid-marquee-item"><span class="pill">Item 3</span></div>
@@ -289,7 +289,7 @@
       <h2>Coloured swatches</h2>
       <p>Each marquee-item is a coloured square.</p>
 
-      <div class="fluid-marquee" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><div class="swatch" style="background:#e74c3c">Red</div></div>
         <div class="fluid-marquee-item"><div class="swatch" style="background:#e67e22">Orange</div></div>
         <div class="fluid-marquee-item"><div class="swatch" style="background:#f1c40f;color:#222">Yellow</div></div>
@@ -303,7 +303,7 @@
       <h2>Images</h2>
       <p>Image content from picsum.photos.</p>
 
-      <div class="fluid-marquee" data-speed="96" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-speed="96" data-fluid-marquee-infinite>
         <img class="fluid-marquee-item logo" src="https://picsum.photos/id/1011/240/120">
         <img class="fluid-marquee-item logo" src="https://picsum.photos/id/1015/240/120">
         <img class="fluid-marquee-item logo" src="https://picsum.photos/id/1016/240/120">
@@ -319,7 +319,7 @@
       <p>Marquee inside a 600px-wide wrapper. Should still measure and scroll correctly.</p>
 
       <div class="narrow-container">
-        <div class="fluid-marquee" data-pausable data-infinite>
+        <div class="fluid-marquee"data-fluid-marquee-pausable data-fluid-marquee-infinite>
           <div class="fluid-marquee-item"><span class="pill wide-only">Item one</span></div>
           <div class="fluid-marquee-item"><span class="pill wide-only">Item two</span></div>
           <div class="fluid-marquee-item"><span class="pill wide-only">Item three</span></div>
@@ -331,9 +331,9 @@
 
     <section>
       <h2>Vertical marquee</h2>
-      <p>Uses <code>data-vertical</code>. Scrolls top to bottom. Default item padding switches to vertical.</p>
+      <p>Uses <code>data-fluid-marquee-vertical</code>. Scrolls top to bottom. Default item padding switches to vertical.</p>
 
-      <div class="fluid-marquee" data-vertical data-infinite style="height: 240px;">
+      <div class="fluid-marquee"data-fluid-marquee-vertical data-fluid-marquee-infinite style="height: 240px;">
         <div class="fluid-marquee-item"><span class="pill">First</span></div>
         <div class="fluid-marquee-item"><span class="pill">Second</span></div>
         <div class="fluid-marquee-item"><span class="pill">Third</span></div>
@@ -345,7 +345,7 @@
     <section>
       <h2>Vertical draggable + pausable</h2>
 
-      <div class="fluid-marquee" data-vertical data-draggable data-pausable data-infinite style="height: 320px;">
+      <div class="fluid-marquee"data-fluid-marquee-vertical data-fluid-marquee-draggable data-fluid-marquee-pausable data-fluid-marquee-infinite style="height: 320px;">
         <div class="fluid-marquee-item"><span class="pill">Drag vertically</span></div>
         <div class="fluid-marquee-item"><span class="pill">Hover pauses</span></div>
         <div class="fluid-marquee-item"><span class="pill">Click locks pause</span></div>
@@ -359,7 +359,7 @@
     <section>
       <h2>Mixed content</h2>
 
-      <div class="fluid-marquee" data-speed="96" data-infinite>
+      <div class="fluid-marquee"data-fluid-marquee-speed="96" data-fluid-marquee-infinite>
         <div class="fluid-marquee-item"><span class="pill">Text</span></div>
         <img class="fluid-marquee-item logo" src="https://picsum.photos/id/237/240/120">
         <div class="fluid-marquee-item"><div class="swatch" style="background:#1abc9c">Box</div></div>

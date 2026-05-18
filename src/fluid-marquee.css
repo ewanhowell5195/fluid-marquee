@@ -60,7 +60,7 @@
 }
 
 .fluid-marquee-vertical,
-.fluid-marquee[data-vertical],
+.fluid-marquee[data-fluid-marquee-vertical],
 .fluid-marquee-vertical .fluid-marquee-sub,
 .fluid-marquee-vertical .fluid-marquee-track {
   flex-direction: column;
@@ -69,7 +69,7 @@
 }
 
 .fluid-marquee-vertical .fluid-marquee-item,
-.fluid-marquee[data-vertical] .fluid-marquee-item {
+.fluid-marquee[data-fluid-marquee-vertical] .fluid-marquee-item {
   padding: 16px 0;
 }
 
