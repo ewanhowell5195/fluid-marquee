@@ -270,6 +270,22 @@
     </section>
 
     <section>
+      <h2>Add / remove items</h2>
+      <p>Buttons mutate the marquee via <code>m.add(el)</code> and <code>m.remove(m.items.at(-1))</code>.</p>
+
+      <div class="fluid-marquee" id="js-items" data-pausable data-infinite>
+        <div class="fluid-marquee-item"><span class="pill">Item 1</span></div>
+        <div class="fluid-marquee-item"><span class="pill">Item 2</span></div>
+        <div class="fluid-marquee-item"><span class="pill">Item 3</span></div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button type="button" id="js-add">Add item</button>
+        <button type="button" id="js-remove">Remove last item</button>
+      </div>
+    </section>
+
+    <section>
       <h2>Coloured swatches</h2>
       <p>Each marquee-item is a coloured square.</p>
 
@@ -369,6 +385,18 @@
         paused = !paused
         if (paused) m.pause()
         else m.resume()
+      })
+
+      const itemsM = FluidMarquee.get(document.getElementById("js-items"))
+      document.getElementById("js-add").addEventListener("click", () => {
+        const item = document.createElement("div")
+        item.className = "fluid-marquee-item"
+        item.innerHTML = `<span class="pill">Item ${itemsM.items.length + 1}</span>`
+        itemsM.add(item)
+      })
+      document.getElementById("js-remove").addEventListener("click", () => {
+        const last = itemsM.items.at(-1)
+        if (last) itemsM.remove(last)
       })
     </script>
   </body>

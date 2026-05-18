@@ -47,6 +47,7 @@ class FluidMarquee {
     this.momentum = 0
     this.hoverPaused = false
     this.clickPaused = false
+    this.apiPaused = false
     this.pointerDown = false
     this.dragging = false
     this.visible = true
@@ -73,12 +74,7 @@ class FluidMarquee {
     this._resizeObserver.observe(this.element)
     this._resizeObserver.observe(this.measure)
 
-    for (const img of this.measure.querySelectorAll("img")) {
-      if (img.complete) continue
-      const handler = () => this._scheduleRefresh()
-      img.addEventListener("load", handler, { once: true })
-      img.addEventListener("error", handler, { once: true })
-    }
+    this._watchMeasureImages()
 
     this._visibilityObserver = new IntersectionObserver(entries => {
       for (const entry of entries) {
@@ -112,6 +108,13 @@ class FluidMarquee {
       this.clickPaused = true
       this._updateLoop()
     }
+    this.element.addEventListener("click", this._onClick)
+    this._ensureOutsideListener()
+  }
+
+  _ensureOutsideListener() {
+    if (this._outsideAttached) return
+    this._outsideAttached = true
     this._onOutsidePointer = e => {
       if (this.element.contains(e.target)) return
       if (this.clickPaused) {
@@ -119,7 +122,6 @@ class FluidMarquee {
         this._updateLoop()
       }
     }
-    this.element.addEventListener("click", this._onClick)
     document.addEventListener("pointerdown", this._onOutsidePointer)
   }
 
@@ -274,7 +276,7 @@ class FluidMarquee {
   }
 
   _pauseTarget() {
-    return this.hoverPaused || this.clickPaused || this.pointerDown ? 0 : 1
+    return this.apiPaused || this.hoverPaused || this.clickPaused || this.pointerDown ? 0 : 1
   }
 
   _shouldRun() {
@@ -337,13 +339,55 @@ class FluidMarquee {
     this._scheduleRefresh()
   }
 
-  pause() {
-    this.hoverPaused = true
+  get items() {
+    return [...this.sub.children]
+  }
+
+  add(...newItems) {
+    if (!newItems.length) return
+    this.sub.append(...newItems)
+    this._itemsChanged()
+  }
+
+  remove(item) {
+    if (item?.parentNode !== this.sub) return
+    item.remove()
+    this._itemsChanged()
+  }
+
+  setItems(newItems) {
+    this.sub.replaceChildren(...newItems)
+    this._itemsChanged()
+  }
+
+  _watchMeasureImages() {
+    for (const img of this.measure.querySelectorAll("img")) {
+      if (img.complete) continue
+      const handler = () => this._scheduleRefresh()
+      img.addEventListener("load", handler, { once: true })
+      img.addEventListener("error", handler, { once: true })
+    }
+  }
+
+  _itemsChanged() {
+    this.measure.replaceChildren(this.sub.cloneNode(true))
+    while (this.clones.length) this.clones.pop().remove()
+    this._watchMeasureImages()
+    this._scheduleRefresh()
+  }
+
+  pause(sticky = true) {
+    if (sticky) {
+      this.apiPaused = true
+    } else {
+      this._ensureOutsideListener()
+      this.clickPaused = true
+    }
     this._updateLoop()
   }
 
   resume() {
-    this.hoverPaused = false
+    this.apiPaused = false
     this.clickPaused = false
     this._updateLoop()
   }
@@ -359,6 +403,8 @@ class FluidMarquee {
     }
     if (this.pauseOnClick) {
       this.element.removeEventListener("click", this._onClick)
+    }
+    if (this._outsideAttached) {
       document.removeEventListener("pointerdown", this._onOutsidePointer)
     }
     if (this.draggable && this._dragHandlers) {
