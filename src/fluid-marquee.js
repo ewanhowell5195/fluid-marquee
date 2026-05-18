@@ -68,6 +68,8 @@ class FluidMarquee {
     if (this.draggable) this._setupDrag()
 
     this._refresh()
+
+    element.dispatchEvent(new CustomEvent("fluid-marquee:init", { bubbles: true, detail: this }))
   }
 
   _setupObservers() {
@@ -130,8 +132,6 @@ class FluidMarquee {
     const axis = this._clientProp
     let startPos = 0
     let startOffset = 0
-    let lastPos = 0
-    let lastTime = 0
     let moved = false
     let activePointerId = null
 
@@ -144,11 +144,9 @@ class FluidMarquee {
       this.element.setPointerCapture(activePointerId)
       moved = false
       startPos = e[axis]
-      lastPos = e[axis]
-      lastTime = performance.now()
       startOffset = this.offset
       samples.length = 0
-      samples.push({ p: e[axis], t: lastTime })
+      samples.push({ p: e[axis], t: performance.now() })
       this.pointerDown = true
       this._updateLoop()
     }
@@ -168,11 +166,8 @@ class FluidMarquee {
         return
       }
       this._setOffset(startOffset - (e[axis] - startPos))
-      const now = performance.now()
-      samples.push({ p: e[axis], t: now })
+      samples.push({ p: e[axis], t: performance.now() })
       while (samples.length > 6) samples.shift()
-      lastPos = e[axis]
-      lastTime = now
     }
 
     const onUp = e => {
@@ -432,7 +427,7 @@ class FluidMarquee {
     if (this._outsideAttached) {
       document.removeEventListener("pointerdown", this._onOutsidePointer)
     }
-    if (this.draggable && this._dragHandlers) {
+    if (this.draggable) {
       const { onDown, onMove, onUp } = this._dragHandlers
       this.element.removeEventListener("pointerdown", onDown)
       this.element.removeEventListener("pointermove", onMove)
@@ -472,13 +467,15 @@ class FluidMarquee {
   }
 }
 
-if (typeof window !== "undefined") {
-  window.FluidMarquee = FluidMarquee
+window.FluidMarquee = FluidMarquee
 
-  if (document.readyState === "loading") {
-    addEventListener("DOMContentLoaded", () => FluidMarquee.initAll())
-  } else {
-    FluidMarquee.initAll()
-  }
+function run() {
+  FluidMarquee.initAll()
+  dispatchEvent(new Event("fluid-marquee:ready"))
+}
+if (document.readyState === "loading") {
+  addEventListener("DOMContentLoaded", run)
+} else {
+  run()
 }
 

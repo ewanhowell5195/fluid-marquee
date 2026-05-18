@@ -191,6 +191,26 @@ FluidMarquee.init(el)       // Same - also accepts any descendant (uses closest)
 
 `el.marquee` is the shortest form when you already have a reference to the marquee element. `get` and `init` walk up from `el` using `closest(".fluid-marquee")`, so they work whether you pass the marquee itself or any element inside it.
 
+### Events
+
+A `fluid-marquee:init` event is dispatched on each marquee element once it finishes initialising.
+
+```js
+el.addEventListener("fluid-marquee:init", e => {
+  e.target.marquee.pause()
+})
+```
+
+A `fluid-marquee:ready` event is dispatched on `window` once the initial auto-init pass has run (after `DOMContentLoaded`):
+
+```js
+addEventListener("fluid-marquee:ready", () => {
+  document.querySelector(".fluid-marquee").marquee.pause()
+})
+```
+
+Use this when your code runs before the library has had a chance to initialise (e.g. when scripts are deferred or async).
+
 ### Instance API
 
 ```js
