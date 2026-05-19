@@ -224,12 +224,15 @@
         this._updateLoop()
       }
 
+      const onDragStart = e => e.preventDefault()
+
       this.element.addEventListener("pointerdown", onDown)
       this.element.addEventListener("pointermove", onMove)
       this.element.addEventListener("pointerup", onUp)
       this.element.addEventListener("pointercancel", onUp)
+      this.element.addEventListener("dragstart", onDragStart)
 
-      this._dragHandlers = { onDown, onMove, onUp }
+      this._dragHandlers = { onDown, onMove, onUp, onDragStart }
     }
 
     _scheduleRefresh() {
@@ -441,11 +444,12 @@
         document.removeEventListener("pointerdown", this._onOutsidePointer)
       }
       if (this.draggable) {
-        const { onDown, onMove, onUp } = this._dragHandlers
+        const { onDown, onMove, onUp, onDragStart } = this._dragHandlers
         this.element.removeEventListener("pointerdown", onDown)
         this.element.removeEventListener("pointermove", onMove)
         this.element.removeEventListener("pointerup", onUp)
         this.element.removeEventListener("pointercancel", onUp)
+        this.element.removeEventListener("dragstart", onDragStart)
       }
 
       const items = [...this.sub.childNodes]
