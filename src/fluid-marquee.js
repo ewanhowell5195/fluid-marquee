@@ -162,13 +162,13 @@
         const dc = e[crossAxis] - startCross
         if (!moved) {
           if (Math.abs(dp) <= 3 && Math.abs(dc) <= 3) return
-          if (Math.abs(dc) > Math.abs(dp)) {
+          if (Math.abs(dc) > Math.abs(dp) * 2) {
             activePointerId = null
             this.pointerDown = false
             this._updateLoop()
             return
           }
-          this.element.setPointerCapture(e.pointerId)
+          try { this.element.setPointerCapture(e.pointerId) } catch {}
           moved = true
           this.dragging = true
           this.momentum = 0
