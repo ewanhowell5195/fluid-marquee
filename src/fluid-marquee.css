@@ -7,7 +7,6 @@
   overflow: hidden;
   position: relative;
   contain: layout paint;
-  content-visibility: auto;
 }
 
 .fluid-marquee-item {
