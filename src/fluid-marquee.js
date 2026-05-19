@@ -55,6 +55,7 @@
       this.visible = true
       this.scrolling = false
       this.pauseMultiplier = 1
+      this._exposed = { api: false, click: false, drag: false, hover: false }
       this._rafId = 0
       this._lastFrame = 0
       this._refreshScheduled = false
@@ -101,16 +102,41 @@
     _setupHoverPause() {
       this._onEnter = e => {
         if (e.pointerType !== "mouse") return
-        this.hoverPaused = true
-        this._updateLoop()
+        this._setPauseState("hoverPaused", true, "hover")
       }
       this._onLeave = e => {
         if (e.pointerType !== "mouse") return
-        this.hoverPaused = false
-        this._updateLoop()
+        this._setPauseState("hoverPaused", false, "hover")
       }
       this.element.addEventListener("pointerenter", this._onEnter)
       this.element.addEventListener("pointerleave", this._onLeave)
+    }
+
+    _setPauseState(prop, value, cause) {
+      if (this[prop] === value) return
+      this[prop] = value
+      if (!this._higherPriorityActive(cause)) {
+        if (value && !this._exposed[cause]) {
+          this._exposed[cause] = true
+          this.element.dispatchEvent(new CustomEvent("fluid-marquee:pause",
+            { bubbles: true, detail: { cause, marquee: this } }))
+        } else if (!value && this._exposed[cause]) {
+          this._exposed[cause] = false
+          this.element.dispatchEvent(new CustomEvent("fluid-marquee:resume",
+            { bubbles: true, detail: { cause, marquee: this } }))
+        }
+      }
+      this._updateLoop()
+    }
+
+    _higherPriorityActive(cause) {
+      if (cause === "api") return false
+      if (this.apiPaused) return true
+      if (cause === "click") return false
+      if (this.clickPaused) return true
+      if (cause === "drag") return false
+      if (this.dragging) return true
+      return false
     }
 
     _setupClickPause() {
@@ -134,8 +160,7 @@
         }
       }
       this._onClick = () => {
-        this.clickPaused = !this.clickPaused
-        this._updateLoop()
+        this._setPauseState("clickPaused", !this.clickPaused, "click")
       }
       this.element.addEventListener("pointerdown", this._onClickDown)
       this.element.addEventListener("pointermove", this._onClickMove)
@@ -149,10 +174,7 @@
       this._outsideAttached = true
       this._onOutsidePointer = e => {
         if (this.element.contains(e.target)) return
-        if (this.clickPaused) {
-          this.clickPaused = false
-          this._updateLoop()
-        }
+        this._setPauseState("clickPaused", false, "click")
       }
       document.addEventListener("pointerdown", this._onOutsidePointer)
     }
@@ -196,12 +218,11 @@
           }
           try { this.element.setPointerCapture(e.pointerId) } catch {}
           moved = true
-          this.dragging = true
           this.momentum = 0
           startPos = e[axis]
           startOffset = this.offset
           this.element.classList.add("fluid-marquee-dragging")
-          this._updateLoop()
+          this._setPauseState("dragging", true, "drag")
           return
         }
         this._setOffset(startOffset - (e[axis] - startPos))
@@ -214,8 +235,8 @@
         activePointerId = null
         this.pointerDown = false
 
-        if (this.dragging) {
-          this.dragging = false
+        const wasDragging = this.dragging
+        if (wasDragging) {
           this.element.classList.remove("fluid-marquee-dragging")
 
           if (samples.length >= 2) {
@@ -243,11 +264,12 @@
 
           if (this.pauseHover && this.pauseClick) {
             this._ensureOutsideListener()
-            this.clickPaused = true
+            this._setPauseState("clickPaused", true, "click")
           }
+          this._setPauseState("dragging", false, "drag")
+        } else {
+          this._updateLoop()
         }
-
-        this._updateLoop()
       }
 
       const onDragStart = e => e.preventDefault()
@@ -483,31 +505,29 @@
     }
 
     get paused() {
-      return this._pauseTarget() === 0
+      return this.apiPaused || this.hoverPaused || this.clickPaused || this.dragging
     }
 
     get dragPaused() {
-      return this.pointerDown
+      return this.dragging
     }
 
     get userPaused() {
-      return this.hoverPaused || this.clickPaused || this.pointerDown
+      return this.hoverPaused || this.clickPaused || this.dragging
     }
 
     pause(sticky = true) {
       if (sticky) {
-        this.apiPaused = true
+        this._setPauseState("apiPaused", true, "api")
       } else {
         this._ensureOutsideListener()
-        this.clickPaused = true
+        this._setPauseState("clickPaused", true, "click")
       }
-      this._updateLoop()
     }
 
     resume() {
-      this.apiPaused = false
-      this.clickPaused = false
-      this._updateLoop()
+      this._setPauseState("apiPaused", false, "api")
+      this._setPauseState("clickPaused", false, "click")
     }
 
     destroy() {

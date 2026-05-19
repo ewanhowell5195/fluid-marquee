@@ -212,12 +212,37 @@ addEventListener("fluid-marquee:ready", () => {
 
 Use this when your code runs before the library has had a chance to initialise (e.g. when scripts are deferred or async).
 
+`fluid-marquee:pause` and `fluid-marquee:resume` events fire when a pause cause activates or deactivates, *as long as no higher-priority cause is already active*. `event.detail.cause` tells you which cause the event refers to:
+
+| `cause` | Meaning |
+|---|---|
+| `"api"` | `m.pause()` / `m.resume()` |
+| `"click"` | The user clicked the marquee (or clicked outside to unlock) |
+| `"drag"` | The user is dragging the marquee |
+| `"hover"` | The mouse is over the marquee |
+
+Priority order is `api > click > drag > hover`. While a higher-priority cause is in effect, lower-priority causes flip silently in the background. For example, hovering on/off while click-paused fires no events, since click is the visible cause.
+
+```js
+el.addEventListener("fluid-marquee:pause", e => {
+  if (e.detail.cause === "hover") return // ignore hover
+  pauseButton.textContent = "Resume"
+})
+
+el.addEventListener("fluid-marquee:resume", e => {
+  if (e.detail.cause === "hover") return
+  pauseButton.textContent = "Pause"
+})
+```
+
+`event.detail.marquee` is the instance, the same as `e.target.marquee`.
+
 ### Instance API
 
 ```js
 m.pause()         // Sticky pause - only resume() clears it
 m.pause(false)    // User-style pause - clicking outside the marquee clears it
-m.resume()        // Resumes, unless the user is actively interacting (hovering or dragging)
+m.resume()        // Clears api and click pauses (hover and drag self-resolve)
 m.paused          // True if anything is currently keeping it paused
 m.apiPaused       // True if paused via m.pause()
 m.userPaused      // Aggregate - hoverPaused || clickPaused || dragPaused

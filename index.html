@@ -251,21 +251,20 @@
 
     <section>
       <h2>Programmatic pause / resume</h2>
-      <p>This marquee has no <code>data-fluid-marquee-pausable</code>. Pause and resume are driven via the JS API (<code>FluidMarquee.get(el).pause()</code> / <code>.resume()</code>).</p>
+      <p>This marquee has <code>data-fluid-marquee-pausable</code> too, so it pauses on hover and click as well as via the JS API. The toggle button below reflects state via <code>fluid-marquee:pause</code> / <code>fluid-marquee:resume</code> events, ignoring <code>cause: "hover"</code> so it doesn't flicker on mouseover. The status line shows the most recent event.</p>
 
-      <div class="fluid-marquee"id="js-controlled" data-fluid-marquee-infinite>
-        <div class="fluid-marquee-item"><span class="pill">Controlled by JS</span></div>
-        <div class="fluid-marquee-item"><span class="pill">No pausable attribute</span></div>
-        <div class="fluid-marquee-item"><span class="pill">Pause works anyway</span></div>
+      <div class="fluid-marquee" id="js-controlled" data-fluid-marquee-pausable data-fluid-marquee-draggable data-fluid-marquee-infinite>
+        <div class="fluid-marquee-item"><span class="pill">Controlled by JS + UI</span></div>
+        <div class="fluid-marquee-item"><span class="pill">Hover / click pause too</span></div>
+        <div class="fluid-marquee-item"><span class="pill">Events drive the button</span></div>
         <div class="fluid-marquee-item"><span class="pill">Smooth ease-in</span></div>
         <div class="fluid-marquee-item"><span class="pill">Smooth ease-out</span></div>
         <div class="fluid-marquee-item"><span class="pill">Via the public API</span></div>
       </div>
 
-      <div style="display: flex; gap: 8px;">
-        <button type="button" id="js-pause">Pause</button>
-        <button type="button" id="js-resume">Resume</button>
-        <button type="button" id="js-toggle">Toggle</button>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <button type="button" id="js-toggle">Pause</button>
+        <code id="js-status" style="font-size: 0.9em;">idle</code>
       </div>
     </section>
 
@@ -378,14 +377,25 @@
 
       const el = document.getElementById("js-controlled")
       const m = FluidMarquee.get(el)
-      let paused = false
-      document.getElementById("js-pause").addEventListener("click", () => { m.pause(); paused = true })
-      document.getElementById("js-resume").addEventListener("click", () => { m.resume(); paused = false })
-      document.getElementById("js-toggle").addEventListener("click", () => {
-        paused = !paused
-        if (paused) m.pause()
-        else m.resume()
+      const toggleBtn = document.getElementById("js-toggle")
+      const status = document.getElementById("js-status")
+
+      let resumeIntent = false
+      toggleBtn.addEventListener("pointerdown", () => {
+        resumeIntent = m.apiPaused || m.clickPaused
       })
+      toggleBtn.addEventListener("click", () => {
+        if (resumeIntent) m.resume()
+        else m.pause()
+      })
+
+      for (const type of ["pause", "resume"]) {
+        el.addEventListener(`fluid-marquee:${type}`, e => {
+          status.textContent = `${type} (cause: ${e.detail.cause})`
+          if (e.detail.cause === "hover" || e.detail.cause === "drag") return
+          toggleBtn.textContent = type === "pause" ? "Resume" : "Pause"
+        })
+      }
 
       const itemsM = FluidMarquee.get(document.getElementById("js-items"))
       document.getElementById("js-add").addEventListener("click", () => {
