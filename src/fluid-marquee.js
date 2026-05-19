@@ -311,7 +311,7 @@
     }
 
     _applyTransform() {
-      this.track.style.transform = `translate${this._axis}(${-this.offset}px)`
+      this.track.style.transform = this.vertical ? `translate3d(0, ${-this.offset}px, 0)` : `translate3d(${-this.offset}px, 0, 0)`
     }
 
     _pauseTarget() {
