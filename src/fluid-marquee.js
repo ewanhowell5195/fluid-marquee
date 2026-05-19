@@ -172,11 +172,11 @@
     _ensureOutsideListener() {
       if (this._outsideAttached) return
       this._outsideAttached = true
-      this._onOutsidePointer = e => {
+      this._onOutsideClick = e => {
         if (this.element.contains(e.target)) return
         this._setPauseState("clickPaused", false, "click")
       }
-      document.addEventListener("pointerdown", this._onOutsidePointer)
+      document.addEventListener("click", this._onOutsideClick)
     }
 
     _setupDrag() {
@@ -547,7 +547,7 @@
         this.element.removeEventListener("click", this._onClick)
       }
       if (this._outsideAttached) {
-        document.removeEventListener("pointerdown", this._onOutsidePointer)
+        document.removeEventListener("click", this._onOutsideClick)
       }
       if (this.draggable) {
         const { onDown, onMove, onUp, onDragStart } = this._dragHandlers

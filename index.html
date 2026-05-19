@@ -380,12 +380,8 @@
       const toggleBtn = document.getElementById("js-toggle")
       const status = document.getElementById("js-status")
 
-      let resumeIntent = false
-      toggleBtn.addEventListener("pointerdown", () => {
-        resumeIntent = m.apiPaused || m.clickPaused
-      })
       toggleBtn.addEventListener("click", () => {
-        if (resumeIntent) m.resume()
+        if (m.apiPaused || m.clickPaused) m.resume()
         else m.pause()
       })
 
