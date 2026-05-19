@@ -20,6 +20,7 @@ Just add `class="fluid-marquee"` to any container!
 * Drag-to-scrub with momentum, on mouse and touch
 * Auto recalculates on resize and when images finish loading
 * Auto pauses when scrolled off-screen
+* Performance-conscious - steady-state scrolling runs on the compositor thread, off the main thread
 * Programmatic API for pause, resume, and item management
 * Framework-friendly when items are managed via the JS API (`add`, `remove`, `setItems`) instead of reactive rendering
 
@@ -330,10 +331,17 @@ If the content fits inside the container and `data-fluid-marquee-infinite` is no
 2. **Measures the strip** in a hidden node alongside the real one
 3. **Decides whether to scroll** based on whether the strip overflows the container
 4. **Clones the strip** as many times as needed to fill the visible width
-5. **Animates with `requestAnimationFrame`** by translating the track, wrapping the offset modulo the strip width
+5. **Animates with a hybrid WAAPI + rAF strategy** (see below) by translating the track, wrapping the offset modulo the strip width
 6. **Recalculates automatically** on container resize, image load, and item changes
 
-Because the animation is JS-driven rather than a CSS `@keyframes`, drag, momentum, and smooth pause/resume can all share the same offset cleanly without fighting an animation timeline.
+### Hybrid animation
+
+The animation runs in two modes and seamlessly hands off between them:
+
+* **WAAPI (Web Animations API)** drives the steady state. When the marquee is just scrolling at a constant speed (not paused, not dragging, no momentum, on-screen), the track is animated via `element.animate()`. This runs on the browser's compositor thread - the same path CSS `@keyframes` use - so it stays smooth even when the main thread is busy, and doesn't burden the main thread itself.
+* **`requestAnimationFrame`** takes over whenever something needs frame-by-frame JS: drag-to-scrub, momentum flick, the smooth ease in/out on pause/resume, or any other transitional state.
+
+On handoff, the current `currentTime` of the WAAPI animation is read back into the shared `offset`, and the next mode picks up exactly where the previous one left off - so you get native-compositor smoothness in the common case without giving up any of the interactive behaviour rAF makes easy.
 
 ## License
 
