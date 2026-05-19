@@ -110,10 +110,32 @@
     }
 
     _setupClickPause() {
+      let downX = 0
+      let downY = 0
+      let downTime = 0
+      let movedFar = false
+      this._onClickDown = e => {
+        downX = e.clientX
+        downY = e.clientY
+        downTime = performance.now()
+        movedFar = false
+      }
+      this._onClickMove = e => {
+        if (Math.abs(e.clientX - downX) > 3 || Math.abs(e.clientY - downY) > 3) movedFar = true
+      }
+      this._onClickSuppress = e => {
+        if (movedFar || performance.now() - downTime > 500) {
+          e.stopPropagation()
+          e.preventDefault()
+        }
+      }
       this._onClick = () => {
-        this.clickPaused = true
+        this.clickPaused = !this.clickPaused
         this._updateLoop()
       }
+      this.element.addEventListener("pointerdown", this._onClickDown)
+      this.element.addEventListener("pointermove", this._onClickMove)
+      this.element.addEventListener("click", this._onClickSuppress, { capture: true })
       this.element.addEventListener("click", this._onClick)
       this._ensureOutsideListener()
     }
@@ -438,6 +460,9 @@
         this.element.removeEventListener("pointerleave", this._onLeave)
       }
       if (this.pauseClick) {
+        this.element.removeEventListener("pointerdown", this._onClickDown)
+        this.element.removeEventListener("pointermove", this._onClickMove)
+        this.element.removeEventListener("click", this._onClickSuppress, { capture: true })
         this.element.removeEventListener("click", this._onClick)
       }
       if (this._outsideAttached) {
