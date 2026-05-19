@@ -6,6 +6,8 @@
   justify-content: safe center;
   overflow: hidden;
   position: relative;
+  contain: layout paint;
+  content-visibility: auto;
 }
 
 .fluid-marquee-item {
