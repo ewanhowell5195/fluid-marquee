@@ -95,16 +95,18 @@
     }
 
     _setupHoverPause() {
-      this._onEnter = () => {
+      this._onEnter = e => {
+        if (e.pointerType !== "mouse") return
         this.hoverPaused = true
         this._updateLoop()
       }
-      this._onLeave = () => {
+      this._onLeave = e => {
+        if (e.pointerType !== "mouse") return
         this.hoverPaused = false
         this._updateLoop()
       }
-      this.element.addEventListener("mouseenter", this._onEnter)
-      this.element.addEventListener("mouseleave", this._onLeave)
+      this.element.addEventListener("pointerenter", this._onEnter)
+      this.element.addEventListener("pointerleave", this._onLeave)
     }
 
     _setupClickPause() {
@@ -131,7 +133,9 @@
 
     _setupDrag() {
       const axis = this._clientProp
+      const crossAxis = this.vertical ? "clientX" : "clientY"
       let startPos = 0
+      let startCross = 0
       let startOffset = 0
       let moved = false
       let activePointerId = null
@@ -142,9 +146,9 @@
         if (!this.scrolling) return
         if (e.pointerType === "mouse" && e.button !== 0) return
         activePointerId = e.pointerId
-        this.element.setPointerCapture(activePointerId)
         moved = false
         startPos = e[axis]
+        startCross = e[crossAxis]
         startOffset = this.offset
         samples.length = 0
         samples.push({ p: e[axis], t: performance.now() })
@@ -155,8 +159,16 @@
       const onMove = e => {
         if (e.pointerId !== activePointerId) return
         const dp = e[axis] - startPos
+        const dc = e[crossAxis] - startCross
         if (!moved) {
-          if (Math.abs(dp) <= 3) return
+          if (Math.abs(dp) <= 3 && Math.abs(dc) <= 3) return
+          if (Math.abs(dc) > Math.abs(dp)) {
+            activePointerId = null
+            this.pointerDown = false
+            this._updateLoop()
+            return
+          }
+          this.element.setPointerCapture(e.pointerId)
           moved = true
           this.dragging = true
           this.momentum = 0
@@ -419,8 +431,8 @@
       this._visibilityObserver?.disconnect()
 
       if (this.pauseHover) {
-        this.element.removeEventListener("mouseenter", this._onEnter)
-        this.element.removeEventListener("mouseleave", this._onLeave)
+        this.element.removeEventListener("pointerenter", this._onEnter)
+        this.element.removeEventListener("pointerleave", this._onLeave)
       }
       if (this.pauseClick) {
         this.element.removeEventListener("click", this._onClick)

@@ -117,7 +117,7 @@ Pause and resume are smoothly eased so the marquee doesn't visually snap.
 
 ### Dragging
 
-Add `data-fluid-marquee-draggable` to let users grab the marquee and scrub through it. Flicking on release applies momentum that decays smoothly back into the normal scroll. On touch, only the marquee's own axis is captured, so the rest of the page still scrolls normally.
+Add `data-fluid-marquee-draggable` to let users grab the marquee and scrub through it. Flicking on release applies momentum that decays smoothly back into the normal scroll.
 
 ```html
 <div class="fluid-marquee" data-fluid-marquee-draggable>…</div>
