@@ -58,6 +58,10 @@
       this._rafId = 0
       this._lastFrame = 0
       this._refreshScheduled = false
+      this._waapi = null
+      this._waapiDuration = 0
+      this._waapiStartOffset = 0
+      this._waapiDirection = 1
 
       element.classList.add("fluid-marquee-initialised")
       if (this.draggable) element.classList.add("fluid-marquee-draggable")
@@ -270,6 +274,8 @@
       const measureSize = this.measure.firstElementChild[this._sizeProp]
       if (!measureSize) return
 
+      this._stopWaapi()
+
       this.subSize = measureSize
       const containerSize = this.element[this._containerProp]
       const shouldScroll = this.infinite || measureSize > containerSize
@@ -311,7 +317,11 @@
     }
 
     _applyTransform() {
-      this.track.style.transform = this.vertical ? `translate3d(0, ${-this.offset}px, 0)` : `translate3d(${-this.offset}px, 0, 0)`
+      this.track.style.transform = this._transformAt(this.offset)
+    }
+
+    _transformAt(offset) {
+      return this.vertical ? `translate3d(0, ${-offset}px, 0)` : `translate3d(${-offset}px, 0, 0)`
     }
 
     _pauseTarget() {
@@ -326,9 +336,55 @@
       return this._pauseTarget() === 1
     }
 
+    _canUseWaapi() {
+      return this.scrolling
+        && this.visible
+        && !this.dragging
+        && this.momentum === 0
+        && this.pauseMultiplier === this._pauseTarget()
+        && this._pauseTarget() === 1
+        && this.subSize > 0
+        && this.speed !== 0
+    }
+
+    _startWaapi() {
+      if (this._waapi) return
+      const direction = this.speed > 0 ? 1 : -1
+      this._waapiStartOffset = this.offset
+      this._waapiDirection = direction
+      this._waapiDuration = Math.abs(this.subSize / this.speed) * 1000
+      const startOff = direction > 0 ? this.offset : this.offset + this.subSize
+      const endOff = direction > 0 ? this.offset + this.subSize : this.offset
+      this._waapi = this.track.animate(
+        [{ transform: this._transformAt(startOff) }, { transform: this._transformAt(endOff) }],
+        { duration: this._waapiDuration, iterations: Infinity, easing: "linear" }
+      )
+    }
+
+    _stopWaapi() {
+      if (!this._waapi) return
+      const t = +this._waapi.currentTime || 0
+      const progress = (t % this._waapiDuration) / this._waapiDuration
+      let off = this._waapiStartOffset + this.subSize * this._waapiDirection * progress
+      if (this.subSize > 0) {
+        off = off % this.subSize
+        if (off < 0) off += this.subSize
+      }
+      this._waapi.cancel()
+      this._waapi = null
+      this.offset = off
+      this._applyTransform()
+    }
+
     _updateLoop() {
-      if (this._shouldRun()) this._startLoop()
-      else this._stopLoop()
+      if (this._canUseWaapi()) {
+        this._stopLoop()
+        this._startWaapi()
+      } else {
+        this._stopWaapi()
+        if (this._shouldRun()) this._startLoop()
+        else this._stopLoop()
+      }
     }
 
     _startLoop() {
@@ -355,6 +411,10 @@
           if (dx !== 0) this._setOffset(this.offset + dx)
         }
 
+        if (this._canUseWaapi()) {
+          this._startWaapi()
+          return
+        }
         if (this._shouldRun()) this._rafId = requestAnimationFrame(tick)
       }
       this._rafId = requestAnimationFrame(tick)
@@ -452,6 +512,7 @@
 
     destroy() {
       this._stopLoop()
+      this._stopWaapi()
       this._resizeObserver?.disconnect()
       this._visibilityObserver?.disconnect()
 
